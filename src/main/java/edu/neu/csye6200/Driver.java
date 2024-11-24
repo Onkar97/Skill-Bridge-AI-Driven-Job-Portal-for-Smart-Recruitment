@@ -1,18 +1,23 @@
 package edu.neu.csye6200;
 
-/**
- * 
- * @author Rohan
- * 
- */
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+
+@RestController
+@SpringBootApplication
 public class Driver {
-	public static void main(String[] args) {
-		System.out.println("============Main Execution Start===================\n\n");
 
-         //Add your code in between these two print statements
-		 
-		System.out.println("\n\n============Main Execution End===================");
+	@RequestMapping("/")
+	String home() {
+		return "Hello World!";
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(Driver.class, args);
 	}
 
 }
