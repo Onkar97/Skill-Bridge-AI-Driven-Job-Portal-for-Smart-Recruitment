@@ -16,5 +16,6 @@ CREATE TABLE "user" (
                         "gra_year" INTEGER DEFAULT NULL,
                         "major" VARCHAR(50) DEFAULT NULL,
                         "dir_desire" INTEGER DEFAULT NULL,
+                        "role" VARCHAR(50) DEFAULT NULL,
                         UNIQUE ("mobile")
 );

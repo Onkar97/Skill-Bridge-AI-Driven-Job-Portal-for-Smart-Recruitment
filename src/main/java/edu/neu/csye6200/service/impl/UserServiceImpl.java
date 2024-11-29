@@ -1,15 +1,15 @@
 package edu.neu.csye6200.service.impl;
 
 import edu.neu.csye6200.entity.UserEntity;
-import edu.neu.csye6200.service.UserService;
 import edu.neu.csye6200.repository.UserRepository;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import edu.neu.csye6200.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -20,8 +20,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Iterable<UserEntity> findAll() {
-        log.info("findall");
-        return userRepository.findAll();
+        List<UserEntity> users = userRepository.findAll();
+        return users.stream()
+                .map(user -> new UserEntity(Math.toIntExact(user.getUser_id()), user.getEmail(), user.getName(), user.getRole()))
+                .collect(Collectors.toList());
     }
 
     @Override

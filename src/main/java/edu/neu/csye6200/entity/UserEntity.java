@@ -1,14 +1,15 @@
 package edu.neu.csye6200.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 
 @Entity
 @Table(name = "user", schema = "public")
 public class UserEntity {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Integer user_id;
     private String mobile;
     private String password;
@@ -24,6 +25,15 @@ public class UserEntity {
     private Integer gra_year;
     private String major;
     private Integer dir_desire;
+    private String role;
+
+    // Constructor
+    public UserEntity(Integer id, String email, String name, String role) {
+        this.user_id = id;
+        this.email = email;
+        this.name = name;
+        this.role = role;
+    }
 
     // Getters and Setters
     public Integer getUser_id() {
@@ -144,5 +154,13 @@ public class UserEntity {
 
     public void setDir_desire(Integer dir_desire) {
         this.dir_desire = dir_desire;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
