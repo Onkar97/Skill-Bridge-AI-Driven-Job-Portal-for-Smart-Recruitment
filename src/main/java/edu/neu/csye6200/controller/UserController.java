@@ -1,7 +1,8 @@
 package edu.neu.csye6200.controller;
+
 import edu.neu.csye6200.entity.*;
-import edu.neu.csye6200.service.UserService;
-import edu.neu.csye6200.service.impl.UserServiceImpl;
+import edu.neu.csye6200.service.*;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,12 @@ import java.util.Optional;
 @RequestMapping("/users")
 
 public class UserController {
-    private static final Logger log = LogManager.getLogger(UserServiceImpl.class);
+    private static final Logger log = LogManager.getLogger(UserService.class);
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private ResumeService resumeService;
 
     @GetMapping("/all")
     public Iterable<UserEntity> findAllEmployees() {
@@ -35,4 +38,25 @@ public class UserController {
                 });
     }
 
+    @PostMapping(value = "/registerPost")
+    @ResponseBody
+    public int userRegister(@RequestParam String mobile, @RequestParam String password, @RequestParam String nickName) {
+
+        if (mobile == null || password == null || nickName == null) {
+            log.warn("123");
+            return 0;
+        }
+
+        UserEntity userEntity = new UserEntity();
+        userEntity.setMobile(mobile);
+        userEntity.setPassword(password);
+        userEntity.setNickname(nickName);
+
+        if (!userService.registerUser(userEntity)) {
+            log.warn("3");
+            return 0;
+        }
+
+        return 1;
+    }
 }

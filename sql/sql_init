@@ -18,3 +18,14 @@ CREATE TABLE "user" (
                         "dir_desire" INTEGER DEFAULT NULL,
                         UNIQUE ("mobile")
 );
+
+DROP TABLE IF EXISTS "resume"
+CREATE TABLE resume (
+                        resume_id SERIAL PRIMARY KEY,
+                        ability VARCHAR(255),
+                        internship VARCHAR(255),
+                        work_experience VARCHAR(255),
+                        certificate VARCHAR(255),
+                        job_desire VARCHAR(255),
+                        user_id INT NOT NULL
+);
