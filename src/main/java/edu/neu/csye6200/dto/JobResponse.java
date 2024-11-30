@@ -1,6 +1,6 @@
 package edu.neu.csye6200.dto;
 
-import edu.neu.csye6200.entity.Company;
+import edu.neu.csye6200.entity.Job;
 import java.time.LocalDateTime;
 
 public class JobResponse {
@@ -12,15 +12,15 @@ public class JobResponse {
     private LocalDateTime timestamp;
     private CompanyResponse company;
 
-    // Constructor
-    public JobResponse(Long id, String title, String description, String location, Double salary, LocalDateTime timestamp, Company company) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.location = location;
-        this.salary = salary;
-        this.timestamp = timestamp;
-        this.company = company != null ? new CompanyResponse(company) : null;
+    // Constructor that accepts a Job entity
+    public JobResponse(Job job) {
+        this.id = job.getId();
+        this.title = job.getTitle();
+        this.description = job.getDescription();
+        this.location = job.getLocation();
+        this.salary = job.getSalary();
+        this.timestamp = job.getTimestamp();
+        this.company = job.getCompany() != null ? new CompanyResponse(job.getCompany()) : null;
     }
 
     // Inner DTO class for company
@@ -29,7 +29,7 @@ public class JobResponse {
         private String name;
         private String industry;
 
-        public CompanyResponse(Company company) {
+        public CompanyResponse(edu.neu.csye6200.entity.Company company) {
             if (company != null) {
                 this.id = company.getId();
                 this.name = company.getName();

@@ -29,5 +29,6 @@ public class JobService {
     public List<Job> searchJobs(String keyword) {
         return jobRepository.searchJobsByKeyword(keyword);
     }
+
 }
 

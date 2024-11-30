@@ -50,15 +50,7 @@ public class JobController {
         Job savedJob = jobRepository.save(job);
 
         // Convert to JobResponse and return
-        JobResponse response = new JobResponse(
-                savedJob.getId(),
-                savedJob.getTitle(),
-                savedJob.getDescription(),
-                savedJob.getLocation(),
-                savedJob.getSalary(),
-                savedJob.getTimestamp(),
-                savedJob.getCompany()
-        );
+        JobResponse response = new JobResponse(savedJob);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -70,15 +62,7 @@ public class JobController {
 
         // Convert to a list of JobResponse DTOs
         List<JobResponse> jobResponses = jobs.stream()
-                .map(job -> new JobResponse(
-                        job.getId(),
-                        job.getTitle(),
-                        job.getDescription(),
-                        job.getLocation(),
-                        job.getSalary(),
-                        job.getTimestamp(),
-                        job.getCompany()
-                ))
+                .map(job -> new JobResponse(job))
                 .toList();
 
         return ResponseEntity.ok(jobResponses);
@@ -93,15 +77,7 @@ public class JobController {
         }
 
         List<JobResponse> responses = jobs.stream()
-                .map(job -> new JobResponse(
-                        job.getId(),
-                        job.getTitle(),
-                        job.getDescription(),
-                        job.getLocation(),
-                        job.getSalary(),
-                        job.getTimestamp(),
-                        job.getCompany()
-                ))
+                .map(job -> new JobResponse(job))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(responses);

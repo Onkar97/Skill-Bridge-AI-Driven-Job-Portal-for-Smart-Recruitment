@@ -27,6 +27,11 @@ public class UserEntity {
     private Integer dir_desire;
     private String role;
 
+    // No-argument constructor (required by Hibernate)
+    public UserEntity() {
+        // Hibernate will use this constructor
+    }
+
     // Constructor
     public UserEntity(Integer id, String email, String name, String role) {
         this.user_id = id;
