@@ -45,6 +45,8 @@ public class JobController {
         job.setSalary(jobRequest.getSalary());
         job.setCompany(company);
         job.setTimestamp(LocalDateTime.now());
+        job.setPostedBy(jobRequest.getPostedBy());
+        job.setJobStatus(jobRequest.getJobStatus());
 
         // Save the job
         Job savedJob = jobRepository.save(job);
@@ -62,7 +64,7 @@ public class JobController {
 
         // Convert to a list of JobResponse DTOs
         List<JobResponse> jobResponses = jobs.stream()
-                .map(job -> new JobResponse(job))
+                .map(JobResponse::new)
                 .toList();
 
         return ResponseEntity.ok(jobResponses);
@@ -77,7 +79,7 @@ public class JobController {
         }
 
         List<JobResponse> responses = jobs.stream()
-                .map(job -> new JobResponse(job))
+                .map(JobResponse::new)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(responses);

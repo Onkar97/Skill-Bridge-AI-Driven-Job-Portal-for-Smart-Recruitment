@@ -1,7 +1,8 @@
 package edu.neu.csye6200.entity;
 
-import edu.neu.csye6200.entity.UserEntity;
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 public class JobApplication {
@@ -14,6 +15,12 @@ public class JobApplication {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private UserEntity user; // Assuming you have a User entity that matches the "user" table
 
+    @Column(name = "job_id", nullable = false)
+    private Long job;
+
+    @Column(name = "date_applied", nullable = false)
+    private LocalDateTime timestamp;
+
     @Column(name = "resume_path", nullable = false)
     private String resumePath; // Path to the stored resume file
 
@@ -25,6 +32,8 @@ public class JobApplication {
     public void setId(Long id) {
         this.id = id;
     }
+
+
 
     public UserEntity getUser() {
         return user;
@@ -41,4 +50,12 @@ public class JobApplication {
     public void setResumePath(String resumePath) {
         this.resumePath = resumePath;
     }
+
+    public Long getJob() {return job;}
+
+    public void setJob(Long job) { this.job = job;}
+
+    public LocalDateTime getDateApplied() {return timestamp; }
+
+    public void setDateApplied(LocalDateTime timestamp) {this.timestamp = timestamp;}
 }

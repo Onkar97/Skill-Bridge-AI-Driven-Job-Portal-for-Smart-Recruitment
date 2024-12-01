@@ -6,6 +6,8 @@ public class JobRequest {
     private String location;
     private Double salary;
     private String companyName;
+    private String postedBy; // New field
+    private String jobStatus; // New field
 
     // Getters and Setters
     public String getTitle() {
@@ -46,5 +48,21 @@ public class JobRequest {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
+    }
+
+    public String getPostedBy() {
+        return postedBy;
+    }
+
+    public void setPostedBy(String postedBy) {
+        this.postedBy = postedBy;
+    }
+
+    public String getJobStatus() {
+        return jobStatus;
+    }
+
+    public void setJobStatus(String jobStatus) {
+        this.jobStatus = jobStatus;
     }
 }
