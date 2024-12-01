@@ -1,15 +1,15 @@
 package edu.neu.csye6200.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
 
 
 @Entity
 @Table(name = "user", schema = "public")
 public class UserEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
     private Integer user_id;
     private String mobile;
     private String password;
@@ -41,11 +41,11 @@ public class UserEntity {
     }
 
     // Getters and Setters
-    public Integer getUser_id() {
+    public Integer getUserId() {
         return user_id;
     }
 
-    public void setUser_id(Integer user_id) {
+    public void setUserId(Integer user_id) {
         this.user_id = user_id;
     }
 
@@ -81,11 +81,11 @@ public class UserEntity {
         this.gender = gender;
     }
 
-    public Integer getBirth_year() {
+    public Integer getBirthYear() {
         return birth_year;
     }
 
-    public void setBirth_year(Integer birth_year) {
+    public void setBirthYear(Integer birth_year) {
         this.birth_year = birth_year;
     }
 
@@ -121,11 +121,11 @@ public class UserEntity {
         this.city = city;
     }
 
-    public String getEdu_degree() {
+    public String getEduDegree() {
         return edu_degree;
     }
 
-    public void setEdu_degree(String edu_degree) {
+    public void setEduDegree(String edu_degree) {
         this.edu_degree = edu_degree;
     }
 
@@ -137,11 +137,11 @@ public class UserEntity {
         this.graduation = graduation;
     }
 
-    public Integer getGra_year() {
+    public Integer getGraYear() {
         return gra_year;
     }
 
-    public void setGra_year(Integer gra_year) {
+    public void setGraYear(Integer gra_year) {
         this.gra_year = gra_year;
     }
 
@@ -153,11 +153,11 @@ public class UserEntity {
         this.major = major;
     }
 
-    public Integer getDir_desire() {
+    public Integer getDirDesire() {
         return dir_desire;
     }
 
-    public void setDir_desire(Integer dir_desire) {
+    public void setDirDesire(Integer dir_desire) {
         this.dir_desire = dir_desire;
     }
 
