@@ -1,37 +1,21 @@
 package edu.neu.csye6200.dto;
 
-import org.springframework.web.multipart.MultipartFile;
+import java.time.LocalDateTime;
 
 public class JobApplicationRequest {
 
-    private String applicantName;
-    private String applicantEmail;
-    private MultipartFile resume; // Handle the file upload
+    private Integer userId;
     private Long jobId;
+    private String resumeFile;
+    private LocalDateTime dateApplied;
 
-    // Getters and Setters
-    public String getApplicantName() {
-        return applicantName;
+    // Getter and Setter methods
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setApplicantName(String applicantName) {
-        this.applicantName = applicantName;
-    }
-
-    public String getApplicantEmail() {
-        return applicantEmail;
-    }
-
-    public void setApplicantEmail(String applicantEmail) {
-        this.applicantEmail = applicantEmail;
-    }
-
-    public MultipartFile getResume() {
-        return resume;
-    }
-
-    public void setResume(MultipartFile resume) {
-        this.resume = resume;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public Long getJobId() {
@@ -40,5 +24,21 @@ public class JobApplicationRequest {
 
     public void setJobId(Long jobId) {
         this.jobId = jobId;
+    }
+
+    public String getResumeFile() {
+        return resumeFile;
+    }
+
+    public void setResumeFile(String resumeFile) {
+        this.resumeFile = resumeFile;
+    }
+
+    public LocalDateTime getDateApplied() {
+        return dateApplied;
+    }
+
+    public void setDateApplied(LocalDateTime dateApplied) {
+        this.dateApplied = dateApplied;
     }
 }

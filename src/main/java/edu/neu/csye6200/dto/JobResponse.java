@@ -11,6 +11,8 @@ public class JobResponse {
     private Double salary;
     private LocalDateTime timestamp;
     private CompanyResponse company;
+    private String postedBy; // New field
+    private String jobStatus; // New field
 
     // Constructor that accepts a Job entity
     public JobResponse(Job job) {
@@ -21,6 +23,8 @@ public class JobResponse {
         this.salary = job.getSalary();
         this.timestamp = job.getTimestamp();
         this.company = job.getCompany() != null ? new CompanyResponse(job.getCompany()) : null;
+        this.postedBy = job.getPostedBy(); // Map from entity
+        this.jobStatus = job.getJobStatus(); // Map from entity
     }
 
     // Inner DTO class for company
@@ -78,5 +82,13 @@ public class JobResponse {
 
     public CompanyResponse getCompany() {
         return company;
+    }
+
+    public String getPostedBy() {
+        return postedBy;
+    }
+
+    public String getJobStatus() {
+        return jobStatus;
     }
 }

@@ -1,6 +1,9 @@
 package edu.neu.csye6200.service;
 
+import edu.neu.csye6200.dto.JobApplicationRequest;
+import edu.neu.csye6200.dto.NotificationRequest;
 import edu.neu.csye6200.entity.JobApplication;
+import edu.neu.csye6200.entity.NotificationEntity;
 import edu.neu.csye6200.repository.JobApplicationRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +16,7 @@ public class JobApplicationService {
         this.jobApplicationRepository = jobApplicationRepository;
     }
 
-    public JobApplication saveJobApplication(JobApplication jobApplication) {
-        return jobApplicationRepository.save(jobApplication);
+    public void saveJobApplication(JobApplication jobApplication) {
+        jobApplicationRepository.save(jobApplication);
     }
 }

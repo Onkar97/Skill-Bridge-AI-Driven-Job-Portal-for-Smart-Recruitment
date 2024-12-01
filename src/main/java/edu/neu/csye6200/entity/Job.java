@@ -22,6 +22,12 @@ public class Job {
 
     private LocalDateTime timestamp;
 
+    @Column(name = "posted_by")
+    private String postedBy; // New column
+
+    @Column(name = "job_status")
+    private String jobStatus; // New column
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -77,5 +83,21 @@ public class Job {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getPostedBy() {
+        return postedBy;
+    }
+
+    public void setPostedBy(String postedBy) {
+        this.postedBy = postedBy;
+    }
+
+    public String getJobStatus() {
+        return jobStatus;
+    }
+
+    public void setJobStatus(String jobStatus) {
+        this.jobStatus = jobStatus;
     }
 }

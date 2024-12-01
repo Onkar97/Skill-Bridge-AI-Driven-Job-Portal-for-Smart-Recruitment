@@ -1,48 +1,39 @@
 package edu.neu.csye6200.dto;
 
-import java.time.LocalDateTime;
-
 public class JobApplicationResponse {
-    private Long id;
-    private String applicantName;
-    private String applicantEmail;
-    private String resumeFilePath;
-    private LocalDateTime applicationDate;
-    private JobResponse job;
 
-    // Constructor
-    public JobApplicationResponse(Long id, String applicantName, String applicantEmail,
-                                  String resumeFilePath, LocalDateTime applicationDate, JobResponse job) {
-        this.id = id;
-        this.applicantName = applicantName;
-        this.applicantEmail = applicantEmail;
-        this.resumeFilePath = resumeFilePath;
-        this.applicationDate = applicationDate;
-        this.job = job;
+    private String message;
+    private String resumePath;
+    private Long jobId;
+
+    public JobApplicationResponse(String message, String resumePath, Long jobId) {
+        this.message = message;
+        this.resumePath = resumePath;
+        this.jobId = jobId;
     }
 
-    // Getters
-    public Long getId() {
-        return id;
+    // Getter and Setter methods
+    public String getMessage() {
+        return message;
     }
 
-    public String getApplicantName() {
-        return applicantName;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public String getApplicantEmail() {
-        return applicantEmail;
+    public String getResumePath() {
+        return resumePath;
     }
 
-    public String getResumeFilePath() {
-        return resumeFilePath;
+    public void setResumePath(String resumePath) {
+        this.resumePath = resumePath;
     }
 
-    public LocalDateTime getApplicationDate() {
-        return applicationDate;
+    public Long getJobId() {
+        return jobId;
     }
 
-    public JobResponse getJob() {
-        return job;
+    public void setJobId(Long jobId) {
+        this.jobId = jobId;
     }
 }
