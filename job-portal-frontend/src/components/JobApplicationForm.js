@@ -14,7 +14,6 @@ const JobApplicationForm = () => {
             [name]: files ? files[0] : value,
         });
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
