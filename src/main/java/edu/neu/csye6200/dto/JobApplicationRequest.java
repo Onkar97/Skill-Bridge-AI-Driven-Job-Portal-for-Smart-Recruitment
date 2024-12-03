@@ -1,12 +1,14 @@
 package edu.neu.csye6200.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDateTime;
 
 public class JobApplicationRequest {
 
     private Integer userId;
     private Long jobId;
-    private String resumeFile;
+    private MultipartFile resumeFile;
     private LocalDateTime dateApplied;
 
     // Getter and Setter methods
@@ -26,11 +28,11 @@ public class JobApplicationRequest {
         this.jobId = jobId;
     }
 
-    public String getResumeFile() {
+    public MultipartFile getResumeFile() {
         return resumeFile;
     }
 
-    public void setResumeFile(String resumeFile) {
+    public void setResumeFile(MultipartFile resumeFile) {
         this.resumeFile = resumeFile;
     }
 

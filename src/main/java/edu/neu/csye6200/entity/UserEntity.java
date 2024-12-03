@@ -1,8 +1,6 @@
 package edu.neu.csye6200.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 
 @Entity

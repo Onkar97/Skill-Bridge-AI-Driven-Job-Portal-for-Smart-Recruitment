@@ -1,18 +1,20 @@
 package edu.neu.csye6200.dto;
 
 public class JobApplicationResponse {
-
     private String message;
     private String resumePath;
     private Long jobId;
+    private String userEmail;
 
-    public JobApplicationResponse(String message, String resumePath, Long jobId) {
+    // Constructors
+    public JobApplicationResponse(String message, String resumePath, Long jobId, String userEmail) {
         this.message = message;
         this.resumePath = resumePath;
         this.jobId = jobId;
+        this.userEmail = userEmail;
     }
 
-    // Getter and Setter methods
+    // Getters and setters
     public String getMessage() {
         return message;
     }
@@ -35,5 +37,13 @@ public class JobApplicationResponse {
 
     public void setJobId(Long jobId) {
         this.jobId = jobId;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 }
