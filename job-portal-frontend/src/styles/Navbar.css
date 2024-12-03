@@ -1,0 +1,64 @@
+/* Navbar.css */
+.navbar-container {
+    background: linear-gradient(135deg, #333333 30%, #444444 90%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-logo {
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    color: #FFD700; /* Gold */
+    transition: all 0.3s ease;
+}
+
+.navbar-logo:hover {
+    transform: scale(1.05);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.7); /* Gold glow */
+}
+
+.navbar-menu-item {
+    color: #ffffff; /* White */
+    margin: 0 15px;
+    text-transform: uppercase;
+    font-weight: 600;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.navbar-menu-item:hover {
+    color: #FFD700; /* Gold */
+    transform: translateY(-3px);
+}
+
+.navbar-menu-item::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 50%;
+    background-color: #FFD700; /* Gold */
+    transition: all 0.3s ease;
+}
+
+.navbar-menu-item:hover::after {
+    width: 100%;
+    left: 0;
+}
+
+.navbar-profile-icon {
+    transition: all 0.3s ease;
+}
+
+.navbar-profile-icon:hover {
+    transform: rotate(15deg) scale(1.2);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .navbar-menu-item {
+        margin: 10px 0;
+        text-align: center; /* Center align for mobile */
+        font-size: 1rem; /* Slightly smaller font size */
+    }
+}
