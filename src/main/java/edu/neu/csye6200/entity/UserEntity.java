@@ -9,7 +9,6 @@ import jakarta.persistence.Id;
 @Table(name = "user", schema = "public")
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer user_id;
     private String mobile;
     private String password;

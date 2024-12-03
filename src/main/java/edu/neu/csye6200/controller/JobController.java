@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/jobs")
+@CrossOrigin(origins = "http://localhost:3000")
 public class JobController {
 
     @Autowired
