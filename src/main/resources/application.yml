@@ -1,9 +1,8 @@
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:5432/jobportaldb
+        url: jdbc:postgresql://localhost:5432/postgres
         username: postgres
-        password: onkar@123
-        driver-class-name: org.postgresql.Driver
+        password: test@vale
     jpa:
         hibernate:
             ddl-auto: update

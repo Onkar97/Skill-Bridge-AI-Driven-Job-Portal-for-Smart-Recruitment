@@ -1,18 +1,22 @@
 package edu.neu.csye6200.controller;
 
+import edu.neu.csye6200.dto.NotificationRequest;
+import edu.neu.csye6200.dto.RegisterRequest;
 import edu.neu.csye6200.entity.*;
 import edu.neu.csye6200.service.*;
 
+import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
     private static final Logger log = LogManager.getLogger(UserService.class);
@@ -38,25 +42,38 @@ public class UserController {
                 });
     }
 
-    @PostMapping(value = "/registerPost")
+    @PostMapping(value = "/register")
     @ResponseBody
-    public int userRegister(@RequestParam String mobile, @RequestParam String password, @RequestParam String nickName) {
+    public ResponseEntity<Void> userRegister(@RequestBody RegisterRequest registerRequest) {
 
-        if (mobile == null || password == null || nickName == null) {
-            log.warn("123");
-            return 0;
+        if (registerRequest.getEmail() == null || registerRequest.getPassword() == null ) {
+            return ResponseEntity.badRequest().build();
         }
 
         UserEntity userEntity = new UserEntity();
-        userEntity.setMobile(mobile);
-        userEntity.setPassword(password);
-        userEntity.setNickname(nickName);
+        userEntity.setEmail(registerRequest.getEmail());
+        userEntity.setPassword(registerRequest.getPassword());
+        userEntity.setNickname(registerRequest.getName());
 
         if (!userService.registerUser(userEntity)) {
-            log.warn("3");
-            return 0;
+            return ResponseEntity.badRequest().build();
         }
 
-        return 1;
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping(value = "/login")
+    @ResponseBody
+    public ResponseEntity<Void> userLogin(HttpSession httpSession, @RequestParam String email, @RequestParam String password) {
+        log.warn(12345);
+        if (email == null || password == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (userService.loginUser(email, password)) {
+            httpSession.setAttribute("user", userService.getUserByEmail(email));
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+        return ResponseEntity.badRequest().build();
     }
 }
