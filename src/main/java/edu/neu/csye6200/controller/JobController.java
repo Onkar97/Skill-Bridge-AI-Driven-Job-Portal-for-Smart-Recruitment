@@ -1,5 +1,6 @@
 package edu.neu.csye6200.controller;
 
+import edu.neu.csye6200.dto.JobApplicationResponse;
 import edu.neu.csye6200.dto.JobRequest;
 import edu.neu.csye6200.dto.JobResponse;
 import edu.neu.csye6200.entity.Company;
@@ -37,19 +38,7 @@ public class JobController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Company not found");
         }
 
-        // Create the job
-        Job job = new Job();
-        job.setTitle(jobRequest.getTitle());
-        job.setDescription(jobRequest.getDescription());
-        job.setLocation(jobRequest.getLocation());
-        job.setSalary(jobRequest.getSalary());
-        job.setCompany(company);
-        job.setTimestamp(LocalDateTime.now());
-        job.setPostedBy(jobRequest.getPostedBy());
-        job.setJobStatus(jobRequest.getJobStatus());
-
-        // Save the job
-        Job savedJob = jobRepository.save(job);
+        Job savedJob = jobService.createJob(jobRequest, company);
 
         // Convert to JobResponse and return
         JobResponse response = new JobResponse(savedJob);
@@ -59,14 +48,7 @@ public class JobController {
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllJobs() {
-        // Fetch all jobs
-        List<Job> jobs = jobRepository.findAll();
-
-        // Convert to a list of JobResponse DTOs
-        List<JobResponse> jobResponses = jobs.stream()
-                .map(JobResponse::new)
-                .toList();
-
+        List<JobResponse> jobResponses = jobService.getAllJobsApplications();
         return ResponseEntity.ok(jobResponses);
     }
 

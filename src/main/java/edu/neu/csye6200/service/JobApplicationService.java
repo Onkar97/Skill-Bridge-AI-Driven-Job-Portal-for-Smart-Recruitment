@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -62,4 +63,19 @@ public class JobApplicationService {
                 user.getEmail() // Include user email
         );
     }
+
+    public List<JobApplicationResponse> getAllJobsApplications() {
+
+        List<JobApplication> jobApplicationList = jobApplicationRepository.findAll();
+
+        return jobApplicationList.stream()
+                .map(job -> new JobApplicationResponse(
+                        "Job application retrieved successfully!",
+                        job.getResumePath(),
+                        job.getJob(),
+                        job.getUser().getEmail()
+                ))
+                .toList();
+    }
+
 }
