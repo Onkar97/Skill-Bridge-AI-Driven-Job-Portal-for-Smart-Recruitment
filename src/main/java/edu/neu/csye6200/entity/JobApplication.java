@@ -1,7 +1,6 @@
 package edu.neu.csye6200.entity;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
