@@ -15,8 +15,9 @@ public class JobApplication {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private UserEntity user; // Assuming you have a User entity that matches the "user" table
 
-    @Column(name = "job_id", nullable = false)
-    private Long job;
+    @ManyToOne
+    @JoinColumn(name = "job_id", referencedColumnName = "id")
+    private Job job;
 
     @Column(name = "date_applied", nullable = false)
     private LocalDateTime timestamp;
@@ -32,8 +33,6 @@ public class JobApplication {
     public void setId(Long id) {
         this.id = id;
     }
-
-
 
     public UserEntity getUser() {
         return user;
@@ -51,9 +50,9 @@ public class JobApplication {
         this.resumePath = resumePath;
     }
 
-    public Long getJob() {return job;}
+    public Job getJob() {return job;}
 
-    public void setJob(Long job) { this.job = job;}
+    public void setJob(Job job) { this.job = job;}
 
     public LocalDateTime getDateApplied() {return timestamp; }
 

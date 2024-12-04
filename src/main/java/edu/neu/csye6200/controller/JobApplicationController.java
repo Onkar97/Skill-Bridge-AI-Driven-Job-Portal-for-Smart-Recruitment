@@ -1,7 +1,6 @@
 package edu.neu.csye6200.controller;
 import edu.neu.csye6200.dto.JobApplicationRequest;
 import edu.neu.csye6200.dto.JobApplicationResponse;
-import edu.neu.csye6200.entity.JobApplication;
 import edu.neu.csye6200.service.JobApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
