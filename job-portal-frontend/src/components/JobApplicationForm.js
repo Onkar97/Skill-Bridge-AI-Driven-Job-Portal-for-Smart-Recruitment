@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { createJobApplication } from '../services/jobApplicationService';
-import '../styles/file.css'; // Assume we have a separate CSS file
+import { createJobApplication } from '../service/jobApplicationService';
+import '../styles/file.css';
 
 const JobApplicationForm = () => {
     const [formData, setFormData] = useState({ jobId: '', applicantName: '', resume: null });
@@ -14,6 +14,7 @@ const JobApplicationForm = () => {
             [name]: files ? files[0] : value,
         });
     };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);

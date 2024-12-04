@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/job-application")
+@CrossOrigin(origins = "http://localhost:3000")
 public class JobApplicationController {
 
     @Autowired

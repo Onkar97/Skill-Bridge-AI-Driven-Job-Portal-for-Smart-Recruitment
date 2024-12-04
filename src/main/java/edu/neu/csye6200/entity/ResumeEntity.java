@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 @Table(name = "resume", schema = "public")
 public class ResumeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int resume_id;
     private String ability;
     private String internship;

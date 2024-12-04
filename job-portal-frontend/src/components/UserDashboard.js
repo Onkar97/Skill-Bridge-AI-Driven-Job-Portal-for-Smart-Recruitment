@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchUserDetails } from '../services/userService';
+import { fetchUserDetails } from '../service/userService';
 import '../styles/dashboard.css';
 
 const UserDashboard = () => {
