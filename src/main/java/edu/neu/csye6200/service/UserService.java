@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -58,8 +59,8 @@ public class UserService {
 
     @Transactional
     public boolean registerUser(UserEntity userEntity) {
-        String mobile = userEntity.getMobile();
-        if (userRepository.getUserByMobile(mobile).isPresent()) {
+        String email = userEntity.getEmail();
+        if (userRepository.getUserByEmail(email).isPresent()) {
             return false;
         }
 
@@ -87,14 +88,28 @@ public class UserService {
     }
 
 
-    public boolean loginUser(String mobile, String password) {
+    public boolean loginUser(String email, String password) {
+        if (userRepository.getUserByEmail(email).isEmpty()) {
+            log.warn("no such user: " + email);
+            return false;
+        }
+        String passwordDB = userRepository.getUserByEmail(email).get().getPassword();
+
+        try {
+            if (this.encodeByMd5(password).equals(passwordDB)) {
+                return true;
+            }
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("md5 wrong");
+        }
+        log.warn("password wrong" );
         return false;
     }
 
 
-    public Optional<UserEntity> getUserByMobile(String mobile) {
+    public Optional<UserEntity> getUserByEmail(String email) {
 
-        return  userRepository.getUserByMobile(mobile);
+        return  userRepository.getUserByEmail(email);
     }
 
     public String encodeByMd5(String str) throws NoSuchAlgorithmException {
