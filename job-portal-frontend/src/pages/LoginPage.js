@@ -77,7 +77,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
 }));
 
 const Login = ({ onLogin }) => {
-  const [identifier, setIdentifier] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('user');
   const [loading, setLoading] = useState(false);
@@ -91,8 +91,8 @@ const Login = ({ onLogin }) => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!identifier) newErrors.identifier = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(identifier)) newErrors.identifier = 'Invalid email format';
+    if (!email) newErrors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Invalid email format';
     if (!password) newErrors.password = 'Password is required';
     else if (password.length < 8) newErrors.password = 'Password must be at least 8 characters long';
     setErrors(newErrors);
@@ -104,9 +104,10 @@ const Login = ({ onLogin }) => {
     if (!validateForm()) return;
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:3000/api/login', { identifier, password, role });
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
+      const response = await axios.post('http://localhost:8080/api/users/login', { email, password, role });
+      if (response) {
+        // there is no need to maintain session manually
+        //localStorage.setItem('token', response.data.token);
         if (rememberMe) localStorage.setItem('rememberMe', 'true');
         onLogin();
         setSnackbarMessage('Login successful! Redirecting...');
@@ -129,103 +130,103 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <LoginContainer>
-        <LoginPaper>
-          <Logo>WORKWAVES</Logo>
-          <Typography variant="h3" color="primary" gutterBottom>
-            Sign in
-          </Typography>
-          <Typography variant="body1" gutterBottom align="center">
-            Stay updated on your professional world
-          </Typography>
-          <form onSubmit={handleLogin} style={{ width: '100%' }}>
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Email"
-              variant="outlined"
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              required
-              error={!!errors.identifier}
-              helperText={errors.identifier}
-              disabled={loading}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Email />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Password"
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              error={!!errors.password}
-              helperText={errors.password}
-              disabled={loading}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Lock />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <FormControl fullWidth margin="normal">
-              <InputLabel>Role</InputLabel>
-              <Select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                required
-                disabled={loading}
-              >
-                <MenuItem value="user"><Person /> User</MenuItem>
-                <MenuItem value="recruiter"><Business /> Recruiter</MenuItem>
-                <MenuItem value="hr"><SupervisorAccount /> HR/Manager</MenuItem>
-              </Select>
-            </FormControl>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
-              <FormControlLabel
-                control={<Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />}
-                label="Remember me"
+      <ThemeProvider theme={theme}>
+        <LoginContainer>
+          <LoginPaper>
+            <Logo>WORKWAVES</Logo>
+            <Typography variant="h3" color="primary" gutterBottom>
+              Sign in
+            </Typography>
+            <Typography variant="body1" gutterBottom align="center">
+              Stay updated on your professional world
+            </Typography>
+            <form onSubmit={handleLogin} style={{ width: '100%' }}>
+              <TextField
+                  fullWidth
+                  margin="normal"
+                  label="Email"
+                  variant="outlined"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  error={!!errors.email}
+                  helperText={errors.email}
+                  disabled={loading}
+                  InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                          <Email />
+                        </InputAdornment>
+                    ),
+                  }}
               />
-            </Box>
-            <StyledButton
-              type="submit"
-              fullWidth
-              disabled={loading}
+              <TextField
+                  fullWidth
+                  margin="normal"
+                  label="Password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  error={!!errors.password}
+                  helperText={errors.password}
+                  disabled={loading}
+                  InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                          <Lock />
+                        </InputAdornment>
+                    ),
+                    endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                              onClick={() => setShowPassword(!showPassword)}
+                              edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                    ),
+                  }}
+              />
+              <FormControl fullWidth margin="normal">
+                <InputLabel>Role</InputLabel>
+                <Select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    required
+                    disabled={loading}
+                >
+                  <MenuItem value="user"><Person /> User</MenuItem>
+                  <MenuItem value="recruiter"><Business /> Recruiter</MenuItem>
+                  <MenuItem value="hr"><SupervisorAccount /> HR/Manager</MenuItem>
+                </Select>
+              </FormControl>
+              <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
+                <FormControlLabel
+                    control={<Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />}
+                    label="Remember me"
+                />
+              </Box>
+              <StyledButton
+                  type="submit"
+                  fullWidth
+                  disabled={loading}
+              >
+                {loading ? <CircularProgress size={24} /> : 'Sign in'}
+              </StyledButton>
+            </form>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={() => setOpenSnackbar(false)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
-              {loading ? <CircularProgress size={24} /> : 'Sign in'}
-            </StyledButton>
-          </form>
-          <Snackbar
-            open={openSnackbar}
-            autoHideDuration={6000}
-            onClose={() => setOpenSnackbar(false)}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          >
-            <Alert severity={snackbarSeverity}>{snackbarMessage}</Alert>
-          </Snackbar>
-        </LoginPaper>
-      </LoginContainer>
-    </ThemeProvider>
+              <Alert severity={snackbarSeverity}>{snackbarMessage}</Alert>
+            </Snackbar>
+          </LoginPaper>
+        </LoginContainer>
+      </ThemeProvider>
   );
 };
 

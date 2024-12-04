@@ -1,5 +1,6 @@
 package edu.neu.csye6200.controller;
 
+import edu.neu.csye6200.dto.LoginRequest;
 import edu.neu.csye6200.dto.NotificationRequest;
 import edu.neu.csye6200.dto.RegisterRequest;
 import edu.neu.csye6200.entity.*;
@@ -64,14 +65,15 @@ public class UserController {
 
     @PostMapping(value = "/login")
     @ResponseBody
-    public ResponseEntity<Void> userLogin(HttpSession httpSession, @RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<Void> userLogin(HttpSession httpSession, @RequestBody LoginRequest loginRequest) {
         log.warn(12345);
-        if (email == null || password == null) {
+        if (loginRequest.getEmail() == null || loginRequest.getPassword() == null) {
             return ResponseEntity.badRequest().build();
         }
 
-        if (userService.loginUser(email, password)) {
-            httpSession.setAttribute("user", userService.getUserByEmail(email));
+        if (userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword())) {
+            httpSession.setAttribute("user", userService.getUserByEmail(loginRequest.getEmail()));
+            log.warn("login success");
             return ResponseEntity.status(HttpStatus.OK).build();
         }
         return ResponseEntity.badRequest().build();
