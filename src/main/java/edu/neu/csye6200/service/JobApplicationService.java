@@ -50,7 +50,7 @@ public class JobApplicationService {
         JobApplication jobApplication = new JobApplication();
         jobApplication.setUser(user);
         jobApplication.setResumePath(path.toString());
-        jobApplication.setJob(job.getId());
+        jobApplication.setJob(job);
         jobApplication.setDateApplied(LocalDateTime.now());
 
         jobApplicationRepository.save(jobApplication);
@@ -72,7 +72,7 @@ public class JobApplicationService {
                 .map(job -> new JobApplicationResponse(
                         "Job application retrieved successfully!",
                         job.getResumePath(),
-                        job.getJob(),
+                        job.getJob().getId(),
                         job.getUser().getEmail()
                 ))
                 .toList();

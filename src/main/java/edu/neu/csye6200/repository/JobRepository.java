@@ -20,5 +20,9 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             "LOWER(j.location) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(j.company.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<Job> searchJobsByKeyword(@Param("keyword") String keyword);
+
+
+    // Assuming 'industry' is a property of 'Company', not 'Job'
+    List<Job> findAllByCompanyIndustryIn(List<String> industries);
 }
 
