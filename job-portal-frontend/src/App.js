@@ -15,7 +15,6 @@ import CompanyForm from "./pages/CompanyForm";
 import JobManagement from "./pages/JobManagement";
 import CompanyList from "./pages/CompanyList";
 import RegistrationPage from "./pages/RegistrationPage";
-import ResumeBuilder from "./pages/ResumeBuilder";
 import UserCompanyList from "./pages/UserCompanyList";
 import ResumeViewer from "./pages/ResumeViewer";
 import CompanyDetails from "./pages/CompanyDetails";
@@ -37,7 +36,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/RegistrationPage" element={<RegistrationPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/ResumeBuilder" element={<ResumeBuilder />} />
+
         <Route path="/UserCompanyList" element={<UserCompanyList />} />
         <Route path="/CompanyDetails" element={<CompanyDetails />} />
         <Route path = "/JobDetails" element={<JobDetails />} />
