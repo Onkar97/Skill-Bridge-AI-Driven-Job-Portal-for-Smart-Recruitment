@@ -12,6 +12,7 @@ import {
 } from '@mui/icons-material';
 import "../styles/login.css";
 
+// Theme setup
 const theme = createTheme({
   palette: {
     primary: {
@@ -98,6 +99,7 @@ const Login = ({ onLogin }) => {
     else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Invalid email format';
     if (!password) newErrors.password = 'Password is required';
     else if (password.length < 8) newErrors.password = 'Password must be at least 8 characters long';
+    if (!role) newErrors.role = 'Role is required';  // Added role validation
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -106,23 +108,38 @@ const Login = ({ onLogin }) => {
     event.preventDefault();
     if (!validateForm()) return;
     setLoading(true);
+
     try {
-      const response = await axios.post('http://localhost:8080/api/users/login', { email, password, role });
-      if (response) {
-        if (rememberMe) localStorage.setItem('rememberMe', 'true');
-        onLogin();
+      // Send login request with email, password, and role
+      const response = await axios.post('http://localhost:8080/api/users/login', {
+        email,
+        password,
+        role
+      });
+
+      // Handle response based on backend behavior
+      if (response.status === 200) {
+        // Handle successful login (you can store a session or user data here)
         setSnackbarMessage('Login successful! Redirecting...');
         setSnackbarSeverity('success');
         setOpenSnackbar(true);
+
+        // Simulating session establishment
+        if (rememberMe) localStorage.setItem('rememberMe', 'true');
+
+        // Call onLogin to update the parent component or redirect
+        //onLogin();
         setTimeout(() => {
           navigate(role === 'user' ? '/user-dashboard' : '/recruiter-dashboard');
         }, 1500);
       } else {
-        throw new Error('Login failed: No token received.');
+        throw new Error('Login failed: No valid response');
       }
     } catch (error) {
       console.error('Login error:', error);
-      setSnackbarMessage('Login failed. Please check your credentials and try again.');
+
+      const errorMessage = error.response ? error.response.data : 'An unknown error occurred.';
+      setSnackbarMessage(`Login failed: ${errorMessage}`);
       setSnackbarSeverity('error');
       setOpenSnackbar(true);
     } finally {
@@ -131,115 +148,117 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <LoginContainer>
-        <LoginPaper>
-          <Logo>WorkWaves</Logo>
-          <Typography variant="h3" gutterBottom color="primary">
-            Login
-          </Typography>
-          <Typography variant="body1" align="center" gutterBottom>
-            Welcome back! Sign in to access your account.
-          </Typography>
-          <form onSubmit={handleLogin} style={{ width: '100%' }}>
-            <Box mb={2}>
-              <TextField
-                fullWidth
-                label="Email"
-                variant="outlined"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                error={!!errors.email}
-                helperText={errors.email}
-                disabled={loading}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Email />
-                    </InputAdornment>
-                  ),
-                }}
+      <ThemeProvider theme={theme}>
+        <LoginContainer>
+          <LoginPaper>
+            <Logo>WorkWaves</Logo>
+            <Typography variant="h3" gutterBottom color="primary">
+              Login
+            </Typography>
+            <Typography variant="body1" align="center" gutterBottom>
+              Welcome back! Sign in to access your account.
+            </Typography>
+            <form onSubmit={handleLogin} style={{ width: '100%' }}>
+              <Box mb={2}>
+                <TextField
+                    fullWidth
+                    label="Email"
+                    variant="outlined"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    error={!!errors.email}
+                    helperText={errors.email}
+                    disabled={loading}
+                    InputProps={{
+                      startAdornment: (
+                          <InputAdornment position="start">
+                            <Email />
+                          </InputAdornment>
+                      ),
+                    }}
+                />
+              </Box>
+              <Box mb={2}>
+                <TextField
+                    fullWidth
+                    label="Password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    error={!!errors.password}
+                    helperText={errors.password}
+                    disabled={loading}
+                    InputProps={{
+                      startAdornment: (
+                          <InputAdornment position="start">
+                            <Lock />
+                          </InputAdornment>
+                      ),
+                      endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                                onClick={() => setShowPassword(!showPassword)}
+                                edge="end"
+                            >
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                      ),
+                    }}
+                />
+              </Box>
+              <Box mb={2}>
+                <FormControl fullWidth>
+                  <InputLabel>Role</InputLabel>
+                  <Select
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
+                      required
+                      disabled={loading}
+                  >
+                    <MenuItem value="user"><Person /> User</MenuItem>
+                    <MenuItem value="recruiter"><Business /> Recruiter</MenuItem>
+                    <MenuItem value="hr"><SupervisorAccount /> HR/Manager</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+              <FormControlLabel
+                  control={<Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />}
+                  label="Remember me"
+                  style={{ marginBottom: '20px' }}
               />
-            </Box>
-            <Box mb={2}>
-              <TextField
-                fullWidth
-                label="Password"
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                error={!!errors.password}
-                helperText={errors.password}
-                disabled={loading}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Lock />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowPassword(!showPassword)}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Box>
-            <Box mb={2}>
-              <FormControl fullWidth>
-                <InputLabel>Role</InputLabel>
-                <Select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  required
+              <StyledButton
+                  type="submit"
+                  fullWidth
                   disabled={loading}
-                >
-                  <MenuItem value="user"><Person /> User</MenuItem>
-                  <MenuItem value="recruiter"><Business /> Recruiter</MenuItem>
-                  <MenuItem value="hr"><SupervisorAccount /> HR/Manager</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
-            <FormControlLabel
-              control={<Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />}
-              label="Remember me"
-              style={{ marginBottom: '20px' }}
-            />
-            <StyledButton
-              type="submit"
-              fullWidth
-              disabled={loading}
+              >
+                {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign in'}
+              </StyledButton>
+            </form>
+            <Typography variant="body2" align="center" mt={2}>
+              Don’t have an account?{' '}
+              <Link
+                  onClick={() => navigate('/RegistrationPage')}
+                  style={{ cursor: 'pointer', color: '#1d3557', fontWeight: 'bold' }}
+              >
+                Sign up
+              </Link>
+            </Typography>
+
+            {/* Snackbar for login feedback */}
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={() => setOpenSnackbar(false)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
-              {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign in'}
-            </StyledButton>
-          </form>
-          <Typography variant="body2" align="center" mt={2}>
-            Don’t have an account?{' '}
-            <Link
-              onClick={() => navigate('/RegistrationPage')}
-              style={{ cursor: 'pointer', color: '#1d3557', fontWeight: 'bold' }}
-            >
-              Sign up
-            </Link>
-          </Typography>
-          <Snackbar
-            open={openSnackbar}
-            autoHideDuration={6000}
-            onClose={() => setOpenSnackbar(false)}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          >
-            <Alert severity={snackbarSeverity}>{snackbarMessage}</Alert>
-          </Snackbar>
-        </LoginPaper>
-      </LoginContainer>
-    </ThemeProvider>
+              <Alert severity={snackbarSeverity}>{snackbarMessage}</Alert>
+            </Snackbar>
+          </LoginPaper>
+        </LoginContainer>
+      </ThemeProvider>
   );
 };
 
