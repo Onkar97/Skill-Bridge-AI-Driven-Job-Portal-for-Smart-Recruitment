@@ -41,15 +41,19 @@ function App() {
         <Route path="/UserCompanyList" element={<UserCompanyList />} />
         <Route path="/CompanyDetails" element={<CompanyDetails />} />
         <Route path = "/JobDetails" element={<JobDetails />} />
+
         <Route path ="/ApplicationConfirmation" element={<ApplicationConfirmation />} />
         <Route path ="/JobSearch" element={<JobSearch />} />
         <Route path ="/ResumeUpload" element={<ResumeUpload />} />
         <Route path ="/ApplicationManagement" element={<ApplicationManagement />} />
         <Route path ="/AdminPanel" element={<AdminPanel />} />
 
+          <Route path="/JobApplicationForm" element={<JobApplicationForm />} />
+
+
         {/* User-Specific Routes (Now Public) */}
         <Route path="/user-dashboard" element={<UserDashboard />} />
-        <Route path="/apply-job/:jobId" element={<JobApplicationForm />} />
+
 
         {/* Recruiter-Specific Routes (Now Public) */}
         <Route path="/dashboard" element={<DashboardPage />} />

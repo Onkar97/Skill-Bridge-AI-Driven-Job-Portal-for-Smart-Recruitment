@@ -107,7 +107,7 @@ const Home = () => {
   const navigate = useNavigate(); // Hook to navigate programmatically
 
   const handleExploreClick = () => {
-    navigate('JOBS'); // Redirect to the Jobs section
+    navigate('JobList'); // Redirect to the Jobs section
   };
 
   return (
