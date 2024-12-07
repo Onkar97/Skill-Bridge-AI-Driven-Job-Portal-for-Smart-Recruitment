@@ -109,7 +109,7 @@ const Login = ({ onLogin }) => {
         // there is no need to maintain session manually
         //localStorage.setItem('token', response.data.token);
         if (rememberMe) localStorage.setItem('rememberMe', 'true');
-        onLogin();
+        //onLogin();
         setSnackbarMessage('Login successful! Redirecting...');
         setSnackbarSeverity('success');
         setOpenSnackbar(true);
