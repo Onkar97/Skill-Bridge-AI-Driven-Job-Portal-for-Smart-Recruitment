@@ -14,7 +14,6 @@ import Header from "./components/Header";
 import CompanyForm from "./pages/CompanyForm";
 import JobManagement from "./pages/JobManagement";
 import RegistrationPage from "./pages/RegistrationPage";
-import UserCompanyList from "./pages/UserCompanyList";
 import ResumeViewer from "./pages/ResumeViewer";
 import CompanyDetails from "./pages/CompanyDetails";
 import JobDetails from "./pages/JobDetails";
@@ -28,6 +27,7 @@ import CreateNotification from "./admin/CreateNotification";
 import UserApplications from "./pages/UserApplications";
 import CompanyList from "./pages/CompanyList";
 import JobManager from "./components/JobManager";
+import UserProfile from "./pages/UserProfile";
 
 
 function App() {
@@ -46,7 +46,7 @@ function App() {
         <Route path="/CompanyDetails" element={<CompanyDetails />} />
         <Route path = "/JobDetails" element={<JobDetails />} />
         <Route path = "/JobManager" element={<JobManager/>} />
-
+         <Route path="/profile" element={<UserProfile />} />
         <Route path="/my-applications" element={<UserApplications />} />
 
         <Route path ="/ApplicationConfirmation" element={<ApplicationConfirmation />} />
