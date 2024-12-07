@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import JobList from "./JobList";
-import JobPostForm from "./JobPostForm";
+import JobList from "../pages/JobList";
+import JobPostForm from "../pages/JobPostForm";
 
 const BASE_URL = "http://localhost:8080";
 

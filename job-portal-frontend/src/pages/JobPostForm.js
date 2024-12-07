@@ -1,10 +1,33 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "../styles/form.css";
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Paper,
+  Grid,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
 
-const BASE_URL = "http://localhost:8080";
+// Base URL for the backend
+const BASE_URL = "http://localhost:8080"; // Update with your backend URL
 
-const JobPostForm = () => {
+// Styled Paper for better UI
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(4),
+  margin: theme.spacing(4, 0),
+  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+  borderRadius: theme.shape.borderRadius,
+}));
+
+const JobPostForm = ({ onJobPosted }) => {
+  // State to hold form data
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -12,42 +35,29 @@ const JobPostForm = () => {
     salary: "",
     companyName: "",
     postedBy: "",
-    jobStatus: "active",
+    jobStatus: "active", // Default job status
+    link: "", // New field for external link
   });
 
-  const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-
+  // Handler for input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const validateForm = () => {
-    if (!formData.title || !formData.description || !formData.location || !formData.companyName || !formData.postedBy) {
-      return "All fields except salary are required.";
-    }
-    if (formData.salary && isNaN(formData.salary)) {
-      return "Salary must be a valid number.";
-    }
-    return null;
-  };
-
+  // Handler for form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage(""); // Clear previous errors
-    const validationError = validateForm();
-    if (validationError) {
-      setErrorMessage(validationError);
-      return;
-    }
-
-    setLoading(true);
     try {
-      await axios.post(`${BASE_URL}/api/jobs`, formData, {
-        headers: { "Content-Type": "application/json" },
-      });
+      // Notify the user of success
       alert("Job posted successfully!");
+
+      // Call the callback to update job list if provided
+      if (onJobPosted) {
+        onJobPosted(formData); // Pass the newly posted job data back
+      }
+
+      // Reset form after successful submission
       setFormData({
         title: "",
         description: "",
@@ -56,108 +66,126 @@ const JobPostForm = () => {
         companyName: "",
         postedBy: "",
         jobStatus: "active",
+        link: "", // Reset link field
       });
     } catch (error) {
+      // Notify the user of an error
       console.error("Error posting job:", error);
-      if (error.response?.data) {
-        setErrorMessage(error.response.data.error || "An unexpected error occurred.");
-      } else {
-        setErrorMessage("Failed to connect to the server. Please try again.");
-      }
-    } finally {
-      setLoading(false);
+      alert("Failed to post job. Please try again.");
     }
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">Post a New Job</h2>
-      {errorMessage && <div className="error-message">{errorMessage}</div>}
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="title">Job Title:</label>
-        <input
-          type="text"
-          id="title"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          placeholder="Enter the job title"
-          required
-        />
-
-        <label htmlFor="description">Description:</label>
-        <textarea
-          id="description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="Enter a brief job description"
-          required
-        ></textarea>
-
-        <label htmlFor="location">Location:</label>
-        <input
-          type="text"
-          id="location"
-          name="location"
-          value={formData.location}
-          onChange={handleChange}
-          placeholder="Enter the job location"
-          required
-        />
-
-        <label htmlFor="salary">Salary (Optional):</label>
-        <input
-          type="number"
-          id="salary"
-          name="salary"
-          value={formData.salary}
-          onChange={handleChange}
-          placeholder="Enter the salary"
-        />
-
-        <label htmlFor="companyName">Company Name:</label>
-        <input
-          type="text"
-          id="companyName"
-          name="companyName"
-          value={formData.companyName}
-          onChange={handleChange}
-          placeholder="Enter the company name"
-          required
-        />
-
-        <label htmlFor="postedBy">Posted By:</label>
-        <input
-          type="text"
-          id="postedBy"
-          name="postedBy"
-          value={formData.postedBy}
-          onChange={handleChange}
-          placeholder="Enter your name"
-          required
-        />
-
-        <label htmlFor="jobStatus">Job Status:</label>
-        <select
-          id="jobStatus"
-          name="jobStatus"
-          value={formData.jobStatus}
-          onChange={handleChange}
-        >
-          <option value="active">Active</option>
-          <option value="closed">Closed</option>
-        </select>
-
-        <button
-          type="submit"
-          className="submit-btn"
-          disabled={loading}
-        >
-          {loading ? "Posting..." : "Post Job"}
-        </button>
-      </form>
-    </div>
+    <Container maxWidth="sm">
+      <StyledPaper elevation={3}>
+        <Typography variant="h4" color="primary" align="center" gutterBottom>
+          Post a Job
+        </Typography>
+        <Typography variant="body1" align="center" color="textSecondary" gutterBottom>
+          Fill out the details below to post a new job opening.
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <Box mb={3}>
+            <TextField
+              label="Job Title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              fullWidth
+              required
+              variant="outlined"
+            />
+          </Box>
+          <Box mb={3}>
+            <TextField
+              label="Job Description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              fullWidth
+              required
+              multiline
+              rows={4}
+              variant="outlined"
+            />
+          </Box>
+          <Box mb={3}>
+            <TextField
+              label="Job Location"
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+              fullWidth
+              required
+              variant="outlined"
+            />
+          </Box>
+          <Box mb={3}>
+            <TextField
+              label="Salary"
+              name="salary"
+              value={formData.salary}
+              onChange={handleChange}
+              fullWidth
+              required
+              type="number"
+              variant="outlined"
+            />
+          </Box>
+          <Box mb={3}>
+            <TextField
+              label="Company Name"
+              name="companyName"
+              value={formData.companyName}
+              onChange={handleChange}
+              fullWidth
+              required
+              variant="outlined"
+            />
+          </Box>
+          <Box mb={3}>
+            <TextField
+              label="Posted By"
+              name="postedBy"
+              value={formData.postedBy}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+            />
+          </Box>
+          <Box mb={3}>
+            <TextField
+              label="External Link"
+              name="link"
+              value={formData.link}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              placeholder="https://example.com"
+            />
+          </Box>
+          <Box mb={3}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel>Job Status</InputLabel>
+              <Select
+                name="jobStatus"
+                value={formData.jobStatus}
+                onChange={handleChange}
+                label="Job Status"
+              >
+                <MenuItem value="active">Active</MenuItem>
+                <MenuItem value="closed">Closed</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+          <Grid container justifyContent="center">
+            <Button type="submit" variant="contained" color="primary" size="large">
+              Post Job
+            </Button>
+          </Grid>
+        </form>
+      </StyledPaper>
+    </Container>
   );
 };
 
