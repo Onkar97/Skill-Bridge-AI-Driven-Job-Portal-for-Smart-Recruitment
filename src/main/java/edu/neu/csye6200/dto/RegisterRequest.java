@@ -5,9 +5,9 @@ public class RegisterRequest {
     private String email;
     private String password;
     private Integer gender;
-    private Integer birthYear;
+    private String birthYear;
     private Integer role;
-    public RegisterRequest(String name, String email, String password, Integer gender, Integer birthYear, Integer role) {
+    public RegisterRequest(String name, String email, String password, Integer gender, String birthYear, Integer role) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -39,10 +39,10 @@ public class RegisterRequest {
     public void setGender(Integer gender) {
         this.gender = gender;
     }
-    public Integer getBirthYear() {
+    public String getBirthYear() {
         return birthYear;
     }
-    public void setBirthYear(Integer birthYear) {
+    public void setBirthYear(String birthYear) {
         this.birthYear = birthYear;
     }
     public Integer getRole() {

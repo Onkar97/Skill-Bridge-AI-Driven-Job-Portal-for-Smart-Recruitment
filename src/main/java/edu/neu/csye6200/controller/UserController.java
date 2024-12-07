@@ -1,7 +1,6 @@
 package edu.neu.csye6200.controller;
 
 import edu.neu.csye6200.dto.LoginRequest;
-import edu.neu.csye6200.dto.NotificationRequest;
 import edu.neu.csye6200.dto.RegisterRequest;
 import edu.neu.csye6200.entity.*;
 import edu.neu.csye6200.service.*;
@@ -14,10 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 
 @RestController
 @RequestMapping("/api/users")
@@ -55,9 +51,12 @@ public class UserController {
         }
 
         UserEntity userEntity = new UserEntity();
+        userEntity.setName(registerRequest.getName());
         userEntity.setEmail(registerRequest.getEmail());
         userEntity.setPassword(registerRequest.getPassword());
-        userEntity.setNickname(registerRequest.getName());
+        userEntity.setBirthYear(registerRequest.getBirthYear());
+        userEntity.setGender(registerRequest.getGender());
+        userEntity.setRole(registerRequest.getRole());
 
         if (!userService.registerUser(userEntity)) {
             return ResponseEntity.badRequest().build();
@@ -88,6 +87,7 @@ public class UserController {
         return ResponseEntity.badRequest().build();
     }
 
+    // me 1.name 2.email 3.applications 4.interviewsScheduled 5.offersReceived
     @GetMapping(value = "/me")
     @ResponseBody
     public ResponseEntity<?> getUserInfo(HttpSession session) {
