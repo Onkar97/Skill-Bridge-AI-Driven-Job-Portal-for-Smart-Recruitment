@@ -10,4 +10,4 @@ const api = axios.create({
 });
 
 export const fetchUserDetails = () =>
-    api.get('/users/me').then((res) => res.data);
+    api.get('/api/users/me').then((res) => res.data);

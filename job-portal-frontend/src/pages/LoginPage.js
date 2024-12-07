@@ -115,6 +115,8 @@ const Login = ({ onLogin }) => {
         email,
         password,
         role
+      }, {
+        withCredentials: true
       });
 
       // Handle response based on backend behavior
@@ -129,6 +131,7 @@ const Login = ({ onLogin }) => {
 
         // Call onLogin to update the parent component or redirect
         //onLogin();
+
         setTimeout(() => {
           navigate(role === 'user' ? '/user-dashboard' : '/recruiter-dashboard');
         }, 1500);

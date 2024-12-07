@@ -75,8 +75,14 @@ public class UserController {
         }
 
         if (userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword())) {
-            httpSession.setAttribute("user", userService.getUserByEmail(loginRequest.getEmail()));
+            log.warn(userService.getUserByEmail(loginRequest.getEmail()));
+            httpSession.setAttribute("user", userService.getUserByEmail(loginRequest.getEmail()).get());
             log.warn("login success");
+
+            UserEntity user = (UserEntity) httpSession.getAttribute("user");
+            log.warn(user.getEmail());
+            log.warn(httpSession.toString());
+
             return ResponseEntity.status(HttpStatus.OK).build();
         }
         return ResponseEntity.badRequest().build();
@@ -84,36 +90,16 @@ public class UserController {
 
     @GetMapping(value = "/me")
     @ResponseBody
-    public String showInfo(HttpSession httpSession ) {
+    public ResponseEntity<?> getUserInfo(HttpSession session) {
 
-        //用户个人信息
-        UserEntity user = this.getUser(request);
-//        UserEntity user = userService.getUser(5);
+        UserEntity user = (UserEntity) session.getAttribute("user");
+        log.warn(user);
         if (user == null) {
-            return "fail";
+            log.warn("User not authenticated");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
+        log.warn(user.getEmail());
 
-        //个人简历信息
-        ResumeEntity resume = resumeService.getResumeById(user.getUserId());
-        //个人收藏职位
-        List<FavorPositionBO> favorPosList = favorService.listFavorPosition(user.getUserId());
-        //处理完成记录
-        List<ApplicationPositionHRBO> applyPosList = applicationService.listApplyInfo(resume.getResumeId());
-        //待处理记录
-        List<ApplicationPositionHRBO> prePosList = applicationService.listApplyInfoPub(resume.getResumeId());
-        //所有分类记录
-        List<CategoryEntity> allCategoryList = categoryService.getAll();
-
-        Map output = new TreeMap();
-        output.put("user", user);
-        output.put("resume", resume);
-        output.put("favorPosList", favorPosList);
-        output.put("applyPosList", applyPosList);
-        output.put("prePosList",prePosList);
-        output.put("allCategoryList",allCategoryList);
-
-        JSONObject jsonObject = JSONObject.fromObject(output);
-
-        return jsonObject.toString();
+        return ResponseEntity.ok(user); // Send user details back to the frontend
     }
 }
