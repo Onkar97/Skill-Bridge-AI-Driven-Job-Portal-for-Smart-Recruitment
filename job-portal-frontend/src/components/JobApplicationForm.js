@@ -1,93 +1,140 @@
-import React, { useState } from 'react';
-import { createJobApplication } from '../service/jobApplicationService';
-import '../styles/file.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Paper,
+  Grid,
+} from "@mui/material";
+
+const BASE_URL = "http://localhost:8080"; // Update with your backend URL
 
 const JobApplicationForm = () => {
-    const [formData, setFormData] = useState({ jobId: '', applicantName: '', resume: null });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [message, setMessage] = useState({ text: '', type: '' });
+  const [formData, setFormData] = useState({
+    userId: "",
+    jobId: "",
+    resumeFile: null,
+  });
+  const [jobs, setJobs] = useState([]);
+  const [users, setUsers] = useState([]);
 
-    const handleChange = (e) => {
-        const { name, value, files } = e.target;
-        setFormData({
-            ...formData,
-            [name]: files ? files[0] : value,
-        });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleFileChange = (e) => {
+    setFormData({ ...formData, resumeFile: e.target.files[0] });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const form = new FormData();
+    form.append("userId", formData.userId);
+    form.append("jobId", formData.jobId);
+    form.append("resumeFile", formData.resumeFile);
+
+    try {
+      const response = await axios.post(`${BASE_URL}/api/jobs/apply`, form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      alert(response.data.message);
+    } catch (error) {
+      console.error("Error submitting application:", error);
+      alert("Failed to submit application. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    // Fetch available jobs and users
+    const fetchJobsAndUsers = async () => {
+      try {
+        const jobsResponse = await axios.get(`${BASE_URL}/api/jobs/all`);
+        setJobs(jobsResponse.data);
+
+        const usersResponse = await axios.get(`${BASE_URL}/api/users/all`);
+        setUsers(usersResponse.data);
+      } catch (error) {
+        console.error("Error fetching jobs or users:", error);
+      }
     };
+    fetchJobsAndUsers();
+  }, []);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        setMessage({ text: '', type: '' });
-
-        const form = new FormData();
-        form.append('jobId', formData.jobId);
-        form.append('applicantName', formData.applicantName);
-        form.append('resume', formData.resume);
-
-        try {
-            await createJobApplication(form);
-            setMessage({ text: 'Application submitted successfully!', type: 'success' });
-            setFormData({ jobId: '', applicantName: '', resume: null });
-        } catch (error) {
-            console.error(error);
-            setMessage({ text: 'Failed to submit application. Please try again.', type: 'error' });
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    return (
-        <div className="job-application-container">
-            <h2>Job Application Form</h2>
-            <form onSubmit={handleSubmit} className="job-application-form">
-                <div className="form-group">
-                    <label htmlFor="jobId">Job ID</label>
-                    <input
-                        type="text"
-                        id="jobId"
-                        name="jobId"
-                        value={formData.jobId}
-                        onChange={handleChange}
-                        required
-                        placeholder="Enter Job ID"
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="applicantName">Your Name</label>
-                    <input
-                        type="text"
-                        id="applicantName"
-                        name="applicantName"
-                        value={formData.applicantName}
-                        onChange={handleChange}
-                        required
-                        placeholder="Enter your full name"
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="resume">Resume</label>
-                    <input
-                        type="file"
-                        id="resume"
-                        name="resume"
-                        onChange={handleChange}
-                        required
-                        accept=".pdf,.doc,.docx"
-                    />
-                    <small>Accepted formats: PDF, DOC, DOCX</small>
-                </div>
-                {message.text && (
-                    <div className={`message ${message.type}`}>
-                        {message.text}
-                    </div>
-                )}
-                <button type="submit" disabled={isSubmitting} className="submit-button">
-                    {isSubmitting ? 'Submitting...' : 'Submit Application'}
-                </button>
-            </form>
-        </div>
-    );
+  return (
+    <Container maxWidth="sm">
+      <Paper elevation={3} style={{ padding: "20px", marginTop: "20px" }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Apply for a Job
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <Box mb={3}>
+            <FormControl fullWidth>
+              <InputLabel>User</InputLabel>
+              <Select
+                name="userId"
+                value={formData.userId}
+                onChange={handleChange}
+                required
+              >
+                {users.map((user) => (
+                  <MenuItem key={user.id} value={user.id}>
+                    {user.email}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+          <Box mb={3}>
+            <FormControl fullWidth>
+              <InputLabel>Job</InputLabel>
+              <Select
+                name="jobId"
+                value={formData.jobId}
+                onChange={handleChange}
+                required
+              >
+                {jobs.map((job) => (
+                  <MenuItem key={job.id} value={job.id}>
+                    {job.title}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+          <Box mb={3}>
+            <TextField
+              type="file"
+              name="resumeFile"
+              onChange={handleFileChange}
+              fullWidth
+              required
+            />
+          </Box>
+          <Grid container justifyContent="center">
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="large"
+            >
+              Submit Application
+            </Button>
+          </Grid>
+        </form>
+      </Paper>
+    </Container>
+  );
 };
 
 export default JobApplicationForm;

@@ -13,9 +13,7 @@ import About from "./pages/About";
 import Header from "./components/Header";
 import CompanyForm from "./pages/CompanyForm";
 import JobManagement from "./pages/JobManagement";
-import CompanyList from "./pages/CompanyList";
 import RegistrationPage from "./pages/RegistrationPage";
-import ResumeBuilder from "./pages/ResumeBuilder";
 import UserCompanyList from "./pages/UserCompanyList";
 import ResumeViewer from "./pages/ResumeViewer";
 import CompanyDetails from "./pages/CompanyDetails";
@@ -25,6 +23,11 @@ import ApplicationConfirmation from "./admin/ApplicationConfirmation"
 import ResumeUpload from "./admin/ResumeUpload";
 import ApplicationManagement from "./admin/ApplicationManagement";
 import AdminPanel from "./admin/AdminPanel";
+import JobApplicationsList from "./admin/JobApplicationsList";
+import CreateNotification from "./admin/CreateNotification";
+import UserApplications from "./pages/UserApplications";
+import CompanyList from "./pages/CompanyList"
+
 
 function App() {
   return (
@@ -37,22 +40,30 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/RegistrationPage" element={<RegistrationPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/ResumeBuilder" element={<ResumeBuilder />} />
-        <Route path="/UserCompanyList" element={<UserCompanyList />} />
+
+        <Route path="/CompanyList" element={<CompanyList />} />
         <Route path="/CompanyDetails" element={<CompanyDetails />} />
         <Route path = "/JobDetails" element={<JobDetails />} />
+
+        <Route path="/my-applications" element={<UserApplications />} />
+
         <Route path ="/ApplicationConfirmation" element={<ApplicationConfirmation />} />
         <Route path ="/JobSearch" element={<JobSearch />} />
         <Route path ="/ResumeUpload" element={<ResumeUpload />} />
         <Route path ="/ApplicationManagement" element={<ApplicationManagement />} />
         <Route path ="/AdminPanel" element={<AdminPanel />} />
+        <Route path="/create" element={<CreateNotification />} />
+
+          <Route path="/JobApplicationForm" element={<JobApplicationForm />} />
+
 
         {/* User-Specific Routes (Now Public) */}
         <Route path="/user-dashboard" element={<UserDashboard />} />
-        <Route path="/apply-job/:jobId" element={<JobApplicationForm />} />
+
 
         {/* Recruiter-Specific Routes (Now Public) */}
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/JobApplicationsList" element={<JobApplicationsList />} />
 
 
 

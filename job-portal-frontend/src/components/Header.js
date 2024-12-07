@@ -52,10 +52,11 @@ const Header = ({ isLoggedIn, onLogout }) => {
     const menuItems = [
         { text: 'Home', icon: <HomeIcon />, path: '/' },
         { text: 'About', icon: <InfoIcon />, path: '/about' },
-        { text: 'Jobs', icon: <WorkIcon />, path: '/jobs' },
+        { text: 'Jobs', icon: <WorkIcon />, path: '/JobList' },
         { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
         { text: 'Contact', icon: <ContactMailIcon />, path: '/contact' },
-        { text: 'Apply for Job', icon: <AssignmentIcon />, path: '/apply-job' },
+        { text: 'Companies', icon: <AssignmentIcon />, path: '/CompanyList' },
+
 
     ];
 
@@ -79,7 +80,11 @@ const Header = ({ isLoggedIn, onLogout }) => {
                 </>
             ) : (
                 <MenuItem component={Link} to="/login" onClick={handleMenuClose}>
-                    Login
+                Login
+                <MenuItem component={Link} to="/RegistrationPage" onClick={handleMenuClose}>
+                Signup
+
+                </MenuItem>
                 </MenuItem>
             )}
         </Menu>

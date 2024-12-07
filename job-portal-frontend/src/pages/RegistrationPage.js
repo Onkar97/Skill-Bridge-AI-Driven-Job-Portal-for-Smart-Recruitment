@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../styles/RegistrationPage.css";
 
 const RegistrationPage = () => {
     const [formData, setFormData] = useState({
@@ -6,9 +7,9 @@ const RegistrationPage = () => {
         name: "",
         mobile: "",
         password: "",
-        gender: "", // This will still be a string initially
+        gender: "",
         birthYear: "",
-        role: "JOB_SEEKER", // Default role
+        role: "JOB_SEEKER",
     });
 
     const handleChange = (e) => {
@@ -19,7 +20,6 @@ const RegistrationPage = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Map gender strings to integers
         const genderMapping = {
             MALE: 1,
             FEMALE: 2,
@@ -32,10 +32,9 @@ const RegistrationPage = () => {
             HR_MANAGER: 3,
         };
 
-        // Update formData to change gender to an integer
         const dataToSend = {
             ...formData,
-            gender: genderMapping[formData.gender] || null, // Set to null if gender is not selected
+            gender: genderMapping[formData.gender] || null,
             role: roleMapping[formData.role] || null,
         };
 
@@ -55,77 +54,84 @@ const RegistrationPage = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Register</h2>
-            <label>
-                Email:
-                <input
-                    type="text"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
-            <label>
-                Name:
-                <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
-            <label>
-                Mobile:
-                <input
-                    type="text"
-                    name="mobile"
-                    value={formData.mobile}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
-            <label>
-                Password:
-                <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
-            <label>
-                Gender:
-                <select name="gender" value={formData.gender} onChange={handleChange}>
-                    <option value="">Select Gender</option>
-                    <option value="MALE">Male</option>
-                    <option value="FEMALE">Female</option>
-                    <option value="OTHER">Other</option>
-                </select>
-            </label>
-            <label>
-                Birth Year:
-                <input
-                    type="number"
-                    name="birthYear"
-                    value={formData.birthYear}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
-            <label>
-                Role:
-                <select name="role" value={formData.role} onChange={handleChange}>
-                    <option value="JOB_SEEKER">Job Seeker</option>
-                    <option value="RECRUITER">Recruiter</option>
-                    <option value="HR_MANAGER">HR Manager</option>
-                </select>
-            </label>
-            <button type="submit">Register</button>
-        </form>
+        <div className="registration-container">
+            <form className="registration-form" onSubmit={handleSubmit}>
+                <h2>Register</h2>
+                <div className="form-group">
+                    <label>Email:</label>
+                    <input
+                        type="text"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        placeholder="Enter your email"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Name:</label>
+                    <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        placeholder="Enter your name"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Mobile:</label>
+                    <input
+                        type="text"
+                        name="mobile"
+                        value={formData.mobile}
+                        onChange={handleChange}
+                        required
+                        placeholder="Enter your mobile number"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Password:</label>
+                    <input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                        placeholder="Enter your password"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Gender:</label>
+                    <select name="gender" value={formData.gender} onChange={handleChange}>
+                        <option value="">Select Gender</option>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                </div>
+                <div className="form-group">
+                    <label>Birth Year:</label>
+                    <input
+                        type="number"
+                        name="birthYear"
+                        value={formData.birthYear}
+                        onChange={handleChange}
+                        required
+                        placeholder="Enter your birth year"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Role:</label>
+                    <select name="role" value={formData.role} onChange={handleChange}>
+                        <option value="JOB_SEEKER">Job Seeker</option>
+                        <option value="RECRUITER">Recruiter</option>
+                        <option value="HR_MANAGER">HR Manager</option>
+                    </select>
+                </div>
+                <button type="submit" className="submit-btn">Register</button>
+            </form>
+        </div>
     );
 };
 

@@ -1,54 +1,84 @@
-import React, { useEffect, useState } from 'react';
-import { fetchNotifications } from '../service/notificationService';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  Container,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TextField,
+  Box,
+  Paper,
+} from "@mui/material";
+
+const BASE_URL = "http://localhost:8080/api/notifications";
 
 const NotificationList = () => {
-    const [notifications, setNotifications] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [filterEmail, setFilterEmail] = useState("");
 
-    useEffect(() => {
-        const loadNotifications = async () => {
-            try {
-                const data = await fetchNotifications();
-                setNotifications(data);
-            } catch (err) {
-                console.error("Error fetching notifications:", err);
-                setError("Failed to load notifications. Please try again later.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadNotifications();
-    }, []);
-
-    if (loading) {
-        return <div className="container">Loading notifications...</div>;
+  const fetchNotifications = async (email = "") => {
+    try {
+      const url = email ? `${BASE_URL}/user/${email}` : BASE_URL;
+      const response = await axios.get(url);
+      setNotifications(response.data);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
     }
+  };
 
-    if (error) {
-        return <div className="container error">{error}</div>;
-    }
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
 
-    return (
-        <div className="container">
-            <h2>Notifications</h2>
-            <ul>
-                {notifications.length > 0 ? (
-                    notifications.map((notification) => (
-                        <li key={notification.id}>
-                            <p>Activity: {notification.activityType}</p>
-                            <p>Description: {notification.jobDescription}</p>
-                            <p>User: {notification.userEmail}</p>
-                            <p>Time: {new Date(notification.timestamp).toLocaleString()}</p>
-                        </li>
-                    ))
-                ) : (
-                    <p>No notifications available.</p>
-                )}
-            </ul>
-        </div>
-    );
+  const handleFilterChange = (e) => {
+    const email = e.target.value;
+    setFilterEmail(email);
+    fetchNotifications(email);
+  };
+
+  return (
+    <Container>
+      <Paper elevation={3} style={{ padding: "20px", marginTop: "20px" }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Notifications
+        </Typography>
+        <Box mb={3}>
+          <TextField
+            label="Filter by User Email"
+            value={filterEmail}
+            onChange={handleFilterChange}
+            fullWidth
+            variant="outlined"
+          />
+        </Box>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>Activity Type</TableCell>
+              <TableCell>Job Description</TableCell>
+              <TableCell>User Email</TableCell>
+              <TableCell>Timestamp</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {notifications.map((notification) => (
+              <TableRow key={notification.notificationId}>
+                <TableCell>{notification.notificationId}</TableCell>
+                <TableCell>{notification.activityType}</TableCell>
+                <TableCell>{notification.jobDescription}</TableCell>
+                <TableCell>{notification.userEmail}</TableCell>
+                <TableCell>{new Date(notification.timestamp).toLocaleString()}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Paper>
+    </Container>
+  );
 };
 
 export default NotificationList;
