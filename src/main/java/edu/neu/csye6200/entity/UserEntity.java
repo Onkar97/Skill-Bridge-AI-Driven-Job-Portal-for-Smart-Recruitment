@@ -23,7 +23,7 @@ public class UserEntity {
     private Integer gra_year;
     private String major;
     private Integer dir_desire;
-    private Integer role;
+    private String role;
 
     // No-argument constructor (required by Hibernate)
     public UserEntity() {
@@ -31,7 +31,7 @@ public class UserEntity {
     }
 
     // Constructor
-    public UserEntity(Integer id, String email, String name, Integer role) {
+    public UserEntity(Integer id, String email, String name, String role) {
         this.user_id = id;
         this.email = email;
         this.name = name;
@@ -159,11 +159,11 @@ public class UserEntity {
         this.dir_desire = dir_desire;
     }
 
-    public Integer getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Integer role) {
+    public void setRole(String role) {
         this.role = role;
     }
 }

@@ -66,16 +66,23 @@ public class UserController {
     @PostMapping(value = "/login")
     @ResponseBody
     public ResponseEntity<Void> userLogin(HttpSession httpSession, @RequestBody LoginRequest loginRequest) {
-        log.warn(12345);
-        if (loginRequest.getEmail() == null || loginRequest.getPassword() == null) {
+        log.warn("Processing login request");
+
+        // Validate required fields
+        if (loginRequest.getEmail() == null || loginRequest.getPassword() == null || loginRequest.getRole() == null) {
+            log.warn("Missing login fields");
             return ResponseEntity.badRequest().build();
         }
 
-        if (userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword())) {
+        // Call loginUser with all required parameters
+        if (userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword(), loginRequest.getRole())) {
             httpSession.setAttribute("user", userService.getUserByEmail(loginRequest.getEmail()));
-            log.warn("login success");
+            log.warn("Login successful");
             return ResponseEntity.status(HttpStatus.OK).build();
         }
+
+        log.warn("Login failed");
         return ResponseEntity.badRequest().build();
     }
+
 }

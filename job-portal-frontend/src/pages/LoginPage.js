@@ -14,30 +14,23 @@ import "../styles/login.css";
 
 const theme = createTheme({
   palette: {
-    primary: {
-      main: '#1d3557', // Modern dark blue
-    },
-    secondary: {
-      main: '#457b9d', // Light blue
-    },
-    background: {
-      default: '#f1faee', // Soft background
-    },
+    primary: { main: '#1d3557' },
+    secondary: { main: '#457b9d' },
+    background: { default: '#f1faee' },
   },
   typography: {
     fontFamily: "'Poppins', sans-serif",
-    h3: {
-      fontWeight: 600,
-    },
-    body1: {
-      fontSize: '1rem',
-      color: '#333',
-    },
+    h3: { fontWeight: 600 },
+    body1: { fontSize: '1rem', color: '#333' },
   },
-  shape: {
-    borderRadius: 16,
-  },
+  shape: { borderRadius: 16 },
 });
+
+const roleMapping = {
+  user: 1,
+  recruiter: 2,
+  hr: 3,
+};
 
 const LoginContainer = styled(Container)(({ theme }) => ({
   display: 'flex',
@@ -59,13 +52,6 @@ const LoginPaper = styled(Paper)(({ theme }) => ({
   boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
 }));
 
-const Logo = styled('div')(() => ({
-  fontSize: '28px',
-  fontWeight: 'bold',
-  color: '#1d3557',
-  marginBottom: '20px',
-}));
-
 const StyledButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(2),
   padding: theme.spacing(1.2),
@@ -74,18 +60,15 @@ const StyledButton = styled(Button)(({ theme }) => ({
   fontSize: '1rem',
   backgroundColor: theme.palette.primary.main,
   color: '#fff',
-  '&:hover': {
-    backgroundColor: theme.palette.primary.dark,
-  },
+  '&:hover': { backgroundColor: theme.palette.primary.dark },
 }));
 
-const Login = ({ onLogin }) => {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('user');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
@@ -95,9 +78,7 @@ const Login = ({ onLogin }) => {
   const validateForm = () => {
     const newErrors = {};
     if (!email) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Invalid email format';
     if (!password) newErrors.password = 'Password is required';
-    else if (password.length < 8) newErrors.password = 'Password must be at least 8 characters long';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -106,24 +87,33 @@ const Login = ({ onLogin }) => {
     event.preventDefault();
     if (!validateForm()) return;
     setLoading(true);
+
+    const payload = {
+      email,
+      password,
+      role: roleMapping[role],
+    };
+
+    console.log("Payload being sent:", payload);
+
     try {
-      const response = await axios.post('http://localhost:8080/api/users/login', { email, password, role });
-      if (response) {
-        if (rememberMe) localStorage.setItem('rememberMe', 'true');
-        onLogin();
-        setSnackbarMessage('Login successful! Redirecting...');
-        setSnackbarSeverity('success');
+      const response = await axios.post("http://localhost:8080/api/users/login", payload, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.status === 200) {
+        setSnackbarMessage("Login successful! Redirecting...");
+        setSnackbarSeverity("success");
         setOpenSnackbar(true);
+
         setTimeout(() => {
-          navigate(role === 'user' ? '/user-dashboard' : '/recruiter-dashboard');
+          navigate(role === "user" ? "/user-dashboard" : "/recruiter-dashboard");
         }, 1500);
-      } else {
-        throw new Error('Login failed: No token received.');
       }
     } catch (error) {
-      console.error('Login error:', error);
-      setSnackbarMessage('Login failed. Please check your credentials and try again.');
-      setSnackbarSeverity('error');
+      console.error("Login error:", error);
+      setSnackbarMessage("Login failed. Please check your credentials.");
+      setSnackbarSeverity("error");
       setOpenSnackbar(true);
     } finally {
       setLoading(false);
@@ -134,12 +124,8 @@ const Login = ({ onLogin }) => {
     <ThemeProvider theme={theme}>
       <LoginContainer>
         <LoginPaper>
-          <Logo>WorkWaves</Logo>
           <Typography variant="h3" gutterBottom color="primary">
             Login
-          </Typography>
-          <Typography variant="body1" align="center" gutterBottom>
-            Welcome back! Sign in to access your account.
           </Typography>
           <form onSubmit={handleLogin} style={{ width: '100%' }}>
             <Box mb={2}>
@@ -152,7 +138,6 @@ const Login = ({ onLogin }) => {
                 required
                 error={!!errors.email}
                 helperText={errors.email}
-                disabled={loading}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -162,6 +147,7 @@ const Login = ({ onLogin }) => {
                 }}
               />
             </Box>
+
             <Box mb={2}>
               <TextField
                 fullWidth
@@ -172,7 +158,6 @@ const Login = ({ onLogin }) => {
                 required
                 error={!!errors.password}
                 helperText={errors.password}
-                disabled={loading}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -181,10 +166,7 @@ const Login = ({ onLogin }) => {
                   ),
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowPassword(!showPassword)}
-                        edge="end"
-                      >
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
@@ -192,43 +174,23 @@ const Login = ({ onLogin }) => {
                 }}
               />
             </Box>
+
             <Box mb={2}>
               <FormControl fullWidth>
                 <InputLabel>Role</InputLabel>
-                <Select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  required
-                  disabled={loading}
-                >
+                <Select value={role} onChange={(e) => setRole(e.target.value)} required>
                   <MenuItem value="user"><Person /> User</MenuItem>
                   <MenuItem value="recruiter"><Business /> Recruiter</MenuItem>
                   <MenuItem value="hr"><SupervisorAccount /> HR/Manager</MenuItem>
                 </Select>
               </FormControl>
             </Box>
-            <FormControlLabel
-              control={<Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />}
-              label="Remember me"
-              style={{ marginBottom: '20px' }}
-            />
-            <StyledButton
-              type="submit"
-              fullWidth
-              disabled={loading}
-            >
+
+            <StyledButton type="submit" fullWidth disabled={loading}>
               {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign in'}
             </StyledButton>
           </form>
-          <Typography variant="body2" align="center" mt={2}>
-            Don’t have an account?{' '}
-            <Link
-              onClick={() => navigate('/RegistrationPage')}
-              style={{ cursor: 'pointer', color: '#1d3557', fontWeight: 'bold' }}
-            >
-              Sign up
-            </Link>
-          </Typography>
+
           <Snackbar
             open={openSnackbar}
             autoHideDuration={6000}
