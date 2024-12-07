@@ -26,7 +26,8 @@ import AdminPanel from "./admin/AdminPanel";
 import JobApplicationsList from "./admin/JobApplicationsList";
 import CreateNotification from "./admin/CreateNotification";
 import UserApplications from "./pages/UserApplications";
-import CompanyList from "./pages/CompanyList"
+import CompanyList from "./pages/CompanyList";
+import JobManager from "./components/JobManager";
 
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
         <Route path="/CompanyList" element={<CompanyList />} />
         <Route path="/CompanyDetails" element={<CompanyDetails />} />
         <Route path = "/JobDetails" element={<JobDetails />} />
+        <Route path = "/JobManager" element={<JobManager/>} />
 
         <Route path="/my-applications" element={<UserApplications />} />
 
