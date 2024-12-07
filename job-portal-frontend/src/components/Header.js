@@ -55,7 +55,7 @@ const Header = ({ isLoggedIn, onLogout }) => {
         { text: 'Jobs', icon: <WorkIcon />, path: '/JobList' },
         { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
         { text: 'Contact', icon: <ContactMailIcon />, path: '/contact' },
-        { text: 'Apply', icon: <AssignmentIcon />, path: '/JobApplicationForm' },
+        { text: 'Companies', icon: <AssignmentIcon />, path: '/CompanyList' },
 
 
     ];

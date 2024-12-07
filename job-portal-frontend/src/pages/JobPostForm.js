@@ -15,8 +15,10 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
+// Base URL for the backend
 const BASE_URL = "http://localhost:8080"; // Update with your backend URL
 
+// Styled Paper for better UI
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
   margin: theme.spacing(4, 0),
@@ -24,7 +26,8 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
 }));
 
-const JobPostForm = () => {
+const JobPostForm = ({ onJobPosted }) => {
+  // State to hold form data
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -32,24 +35,41 @@ const JobPostForm = () => {
     salary: "",
     companyName: "",
     postedBy: "",
-    jobStatus: "active", // Default status
+    jobStatus: "active", // Default job status
+    link: "", // New field for external link
   });
 
+  // Handler for input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Handler for form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${BASE_URL}/api/jobs`, formData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      // Notify the user of success
       alert("Job posted successfully!");
+
+      // Call the callback to update job list if provided
+      if (onJobPosted) {
+        onJobPosted(formData); // Pass the newly posted job data back
+      }
+
+      // Reset form after successful submission
+      setFormData({
+        title: "",
+        description: "",
+        location: "",
+        salary: "",
+        companyName: "",
+        postedBy: "",
+        jobStatus: "active",
+        link: "", // Reset link field
+      });
     } catch (error) {
+      // Notify the user of an error
       console.error("Error posting job:", error);
       alert("Failed to post job. Please try again.");
     }
@@ -74,9 +94,6 @@ const JobPostForm = () => {
               fullWidth
               required
               variant="outlined"
-              InputLabelProps={{
-                style: { fontSize: "1rem" }, // Better label styling
-              }}
             />
           </Box>
           <Box mb={3}>
@@ -90,9 +107,6 @@ const JobPostForm = () => {
               multiline
               rows={4}
               variant="outlined"
-              InputLabelProps={{
-                style: { fontSize: "1rem" },
-              }}
             />
           </Box>
           <Box mb={3}>
@@ -104,9 +118,6 @@ const JobPostForm = () => {
               fullWidth
               required
               variant="outlined"
-              InputLabelProps={{
-                style: { fontSize: "1rem" },
-              }}
             />
           </Box>
           <Box mb={3}>
@@ -119,9 +130,6 @@ const JobPostForm = () => {
               required
               type="number"
               variant="outlined"
-              InputLabelProps={{
-                style: { fontSize: "1rem" },
-              }}
             />
           </Box>
           <Box mb={3}>
@@ -133,9 +141,6 @@ const JobPostForm = () => {
               fullWidth
               required
               variant="outlined"
-              InputLabelProps={{
-                style: { fontSize: "1rem" },
-              }}
             />
           </Box>
           <Box mb={3}>
@@ -146,14 +151,22 @@ const JobPostForm = () => {
               onChange={handleChange}
               fullWidth
               variant="outlined"
-              InputLabelProps={{
-                style: { fontSize: "1rem" },
-              }}
+            />
+          </Box>
+          <Box mb={3}>
+            <TextField
+              label="External Link"
+              name="link"
+              value={formData.link}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              placeholder="https://example.com"
             />
           </Box>
           <Box mb={3}>
             <FormControl fullWidth variant="outlined">
-              <InputLabel style={{ fontSize: "1rem" }}>Job Status</InputLabel>
+              <InputLabel>Job Status</InputLabel>
               <Select
                 name="jobStatus"
                 value={formData.jobStatus}
@@ -166,18 +179,7 @@ const JobPostForm = () => {
             </FormControl>
           </Box>
           <Grid container justifyContent="center">
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              size="large"
-              sx={{
-                padding: "10px 20px",
-                fontWeight: "bold",
-                textTransform: "capitalize",
-                borderRadius: "8px",
-              }}
-            >
+            <Button type="submit" variant="contained" color="primary" size="large">
               Post Job
             </Button>
           </Grid>

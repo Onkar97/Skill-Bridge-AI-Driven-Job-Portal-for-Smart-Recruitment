@@ -2,49 +2,26 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import {
-  Container,
-  TextField,
-  Button,
-  Typography,
-  Paper,
-  InputAdornment,
-  IconButton,
-  ThemeProvider,
-  createTheme,
-  Box,
-  Checkbox,
-  FormControlLabel,
-  Snackbar,
-  Alert,
-  CircularProgress,
-  Link,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
+  Container, TextField, Button, Typography, Paper, InputAdornment, IconButton,
+  ThemeProvider, createTheme, Box, Checkbox, FormControlLabel, Snackbar, Alert,
+  CircularProgress, Link, Select, MenuItem, FormControl, InputLabel
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {
-  Visibility,
-  VisibilityOff,
-  Email,
-  Lock,
-  Person,
-  Business,
-  SupervisorAccount,
+  Visibility, VisibilityOff, Email, Lock, Person, Business, SupervisorAccount,
 } from '@mui/icons-material';
-import '../styles/login.css';
+import "../styles/login.css";
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1d3557',
+      main: '#1d3557', // Modern dark blue
     },
     secondary: {
-      main: '#457b9d',
+      main: '#457b9d', // Light blue
     },
     background: {
-      default: '#f1faee',
+      default: '#f1faee', // Soft background
     },
   },
   typography: {
@@ -102,13 +79,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const roleMapping = {
-  user: 1,
-  recruiter: 2,
-  hr: 3,
-};
-
-const Login = ({ onLogin = () => {} }) => {
+const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('user');
@@ -135,33 +106,19 @@ const Login = ({ onLogin = () => {} }) => {
     event.preventDefault();
     if (!validateForm()) return;
     setLoading(true);
-
-    const roleValue = roleMapping[role]; // Map role to its integer value
-
     try {
-      const response = await axios.post('http://localhost:8080/api/users/login', {
-        email,
-        password,
-        role: roleValue,
-      });
-
-      if (response.status === 200) {
+      const response = await axios.post('http://localhost:8080/api/users/login', { email, password, role });
+      if (response) {
         if (rememberMe) localStorage.setItem('rememberMe', 'true');
+        onLogin();
         setSnackbarMessage('Login successful! Redirecting...');
         setSnackbarSeverity('success');
         setOpenSnackbar(true);
-        onLogin();
         setTimeout(() => {
-          navigate(
-            role === 'user'
-              ? '/user-dashboard'
-              : role === 'recruiter'
-              ? '/recruiter-dashboard'
-              : '/hr-dashboard'
-          );
+          navigate(role === 'user' ? '/user-dashboard' : '/recruiter-dashboard');
         }, 1500);
       } else {
-        throw new Error('Invalid login credentials');
+        throw new Error('Login failed: No token received.');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -244,15 +201,9 @@ const Login = ({ onLogin = () => {} }) => {
                   required
                   disabled={loading}
                 >
-                  <MenuItem value="user">
-                    <Person /> User
-                  </MenuItem>
-                  <MenuItem value="recruiter">
-                    <Business /> Recruiter
-                  </MenuItem>
-                  <MenuItem value="hr">
-                    <SupervisorAccount /> HR/Manager
-                  </MenuItem>
+                  <MenuItem value="user"><Person /> User</MenuItem>
+                  <MenuItem value="recruiter"><Business /> Recruiter</MenuItem>
+                  <MenuItem value="hr"><SupervisorAccount /> HR/Manager</MenuItem>
                 </Select>
               </FormControl>
             </Box>

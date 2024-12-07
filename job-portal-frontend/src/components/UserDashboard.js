@@ -46,7 +46,7 @@ const UserDashboard = () => {
                     <h2>Your Statistics</h2>
                     <div className="stat-grid">
                         <div className="stat-item">
-                            <span className="stat-value">{user?.applications.length || 0}</span>
+                            <span className="stat-value">{user?.applications || 0}</span>
                             <span className="stat-label">Applications Submitted</span>
                         </div>
                         <div className="stat-item">
