@@ -61,50 +61,67 @@ public class UserService {
     public boolean registerUser(UserEntity userEntity) {
         String email = userEntity.getEmail();
         if (userRepository.getUserByEmail(email).isPresent()) {
+            log.warn("User registration failed: Email already exists.");
             return false;
         }
 
-        String password = userEntity.getPassword();
-
         try {
-            // Encrypt the password using MD5
-            String encPass = this.encodeByMd5(password);
+            // Encrypt the password
+            String encPass = this.encodeByMd5(userEntity.getPassword());
             userEntity.setPassword(encPass);
 
-            // Save the user entity and flush the changes
+            // Save the user entity
             userEntity = userRepository.saveAndFlush(userEntity);
 
+            // Create a resume entity and link to the user
             ResumeEntity resume = new ResumeEntity();
             resume.setUserId(userEntity.getUserId());
             resumeRepository.save(resume);
 
+            log.info("User registered successfully: {}", email);
             return true;
 
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("MD5 encryption error: " + e.getMessage());
+            log.error("Password encryption error during registration: {}", e.getMessage());
         }
 
         return false;
     }
 
 
-    public boolean loginUser(String email, String password) {
-        if (userRepository.getUserByEmail(email).isEmpty()) {
-            log.warn("no such user: " + email);
+    public boolean loginUser(String email, String password, Integer role) {
+        Optional<UserEntity> userOptional = userRepository.getUserByEmail(email);
+
+        if (userOptional.isEmpty()) {
+            log.warn("No such user: " + email);
             return false;
         }
-        String passwordDB = userRepository.getUserByEmail(email).get().getPassword();
 
+        UserEntity user = userOptional.get();
+
+        // Check password
         try {
-            if (this.encodeByMd5(password).equals(passwordDB)) {
-                return true;
+            if (!this.encodeByMd5(password).equals(user.getPassword())) {
+                log.warn("Password mismatch for user: " + email);
+                return false;
             }
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("md5 wrong");
+            log.error("Password hashing error: ", e);
+            return false;
         }
-        log.warn("password wrong" );
-        return false;
+
+        // Check role
+        if (!String.valueOf(role).equals(user.getRole())) {
+            log.warn("Role mismatch for user: " + email);
+            return false;
+        }
+
+        // If email, password, and role all match
+        log.info("Login successful for user: " + email);
+        return true;
     }
+
+
 
 
     public Optional<UserEntity> getUserByEmail(String email) {
