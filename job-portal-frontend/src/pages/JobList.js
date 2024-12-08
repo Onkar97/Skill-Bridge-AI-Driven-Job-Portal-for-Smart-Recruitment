@@ -1,151 +1,100 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../styles/list.css";
+import "../styles/list.css"
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://localhost:8080/api";
 
-const JobList = ({ userId }) => {
+const UserJobApplication = () => {
   const [jobs, setJobs] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [selectedJob, setSelectedJob] = useState(null);
-  const [isApplying, setIsApplying] = useState(false); // Tracks if the user is applying
 
   useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/api/jobs/all`);
-        setJobs(response.data);
-        setSearchResults(response.data);
-      } catch (error) {
-        console.error("Error fetching jobs:", error);
-      }
-    };
-
     fetchJobs();
   }, []);
 
+  // Fetch all jobs
+  const fetchJobs = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/jobs/all`);
+      setJobs(response.data || []);
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
+    }
+  };
+
+  // Search jobs by keyword
   const handleSearch = async () => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/api/jobs/search?keyword=${searchKeyword}`
+        `${BASE_URL}/jobs/search?keyword=${searchKeyword}`
       );
-      setSearchResults(response.data);
+      setJobs(response.data || []);
     } catch (error) {
       console.error("Error searching jobs:", error);
     }
   };
 
-  const handleViewJob = (job) => {
-    setSelectedJob(job);
-  };
+  // Apply for the selected job
+  const handleApply = async (jobId) => {
+    const formData = new FormData();
 
-  const handleApplyJob = () => {
-    setIsApplying(true);
-  };
+    const userId = localStorage.getItem("userId");
+    const resumeFile = document.getElementById(`resume-${jobId}`).files[0];
 
-  const handleSubmitApplication = async (e) => {
-    e.preventDefault();
-    alert("Application submitted successfully!");
-    setIsApplying(false);
-    setSelectedJob(null); // Close modal after submission
+    if (!userId || !resumeFile) {
+      alert("User ID or resume file is missing!");
+      return;
+    }
+
+    formData.append("userId", userId);
+    formData.append("jobId", jobId);
+    formData.append("resumeFile", resumeFile);
+
+    try {
+      await axios.post(`${BASE_URL}/job-application`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      alert("Application submitted successfully!");
+    } catch (error) {
+      console.error("Error applying for job:", error);
+      alert(`Application failed: ${error.response?.data?.error || "Unknown error"}`);
+    }
   };
 
   return (
     <div className="container">
-      <h1 className="heading">Job Listings</h1>
+      <h1>Find Jobs and Apply</h1>
+
       <div className="search-bar">
         <input
           type="text"
+          placeholder="Search by job title or company"
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
-          placeholder="Search jobs by role, company..."
           onKeyPress={(e) => e.key === "Enter" && handleSearch()}
         />
+        <button onClick={handleSearch}>Search</button>
       </div>
+
       <ul className="job-list">
-        {searchResults.map((job) => (
-          <li
-            key={job.id}
-            className="job-item"
-            onClick={() => handleViewJob(job)}
-          >
-            <div className="job-title">{job.title}</div>
-            <div className="job-company">{job.companyName}</div>
+        {jobs.map((job) => (
+          <li key={job.id} className="job-item">
+            <h2>{job.title}</h2>
+            <p><strong>Company:</strong> {job.companyName}</p>
+            <p><strong>Location:</strong> {job.location}</p>
+            <p><strong>Salary:</strong> ${job.salary}</p>
+            <p><strong>Posted By:</strong> {job.postedBy}</p>
+
+            <div className="apply-section">
+              <label htmlFor={`resume-${job.id}`}>Upload Resume:</label>
+              <input type="file" id={`resume-${job.id}`} required />
+              <button onClick={() => handleApply(job.id)}>Apply</button>
+            </div>
           </li>
         ))}
       </ul>
-
-      {selectedJob && (
-        <div className="modal">
-          <div className="modal-content">
-            {!isApplying ? (
-              <>
-                <h2>{selectedJob.title}</h2>
-                <p>
-                  <strong>Company:</strong> {selectedJob.companyName}
-                </p>
-                <p>
-                  <strong>Location:</strong> {selectedJob.location}
-                </p>
-                <p>
-                  <strong>Salary:</strong> ${selectedJob.salary}
-                </p>
-                <p>
-                  <strong>Posted By:</strong> {selectedJob.postedBy}
-                </p>
-                <p>
-                  <strong>Status:</strong> {selectedJob.jobStatus}
-                </p>
-                <p>
-                  <strong>Description:</strong> {selectedJob.description}
-                </p>
-                <button
-                  className="apply-btn"
-                  onClick={handleApplyJob}
-                >
-                  Apply
-                </button>
-                <button
-                  className="close-btn"
-                  onClick={() => setSelectedJob(null)}
-                >
-                  Close
-                </button>
-              </>
-            ) : (
-              <form onSubmit={handleSubmitApplication}>
-                <h2>Apply for {selectedJob.title}</h2>
-                <p>
-                  <strong>Company:</strong> {selectedJob.companyName}
-                </p>
-                <label htmlFor="resume">Upload Resume:</label>
-                <input
-                  type="file"
-                  id="resume"
-                  name="resume"
-                  required
-                  style={{ marginBottom: "15px" }}
-                />
-                <button
-                  type="submit"
-                  className="apply-submit-btn"
-                >
-                  Submit Application
-                </button>
-                <button
-                  className="close-btn"
-                  onClick={() => setIsApplying(false)}
-                >
-                  Cancel
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
-export default JobList;
+export default UserJobApplication;

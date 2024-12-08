@@ -78,4 +78,9 @@ public class JobApplicationService {
                 .toList();
     }
 
+
+
+    public JobApplication findByUserId(Long userId) {
+        return null;
+    }
 }

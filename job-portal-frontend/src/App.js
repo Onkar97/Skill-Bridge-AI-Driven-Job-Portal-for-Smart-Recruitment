@@ -29,6 +29,7 @@ import CompanyList from "./pages/CompanyList";
 import JobManager from "./components/JobManager";
 import UserProfile from "./pages/UserProfile";
 import JobRecommendations from "./components/JobRecommendations";
+import RecruiterDashboard from "./components/RecruiterDashboard";
 
 
 function App() {
@@ -68,6 +69,7 @@ function App() {
         {/* Recruiter-Specific Routes (Now Public) */}
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/JobApplicationsList" element={<JobApplicationsList />} />
+        <Route path="/recruiter-dashboard" element={<RecruiterDashboard />} />
 
 
 
