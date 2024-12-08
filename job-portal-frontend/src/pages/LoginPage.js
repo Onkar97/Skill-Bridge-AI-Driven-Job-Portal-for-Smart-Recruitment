@@ -89,7 +89,6 @@ const Login = () => {
     try {
       const response = await axios.post("http://localhost:8080/api/users/login", payload, {
         headers: { "Content-Type": "application/json" },
-        withCredentials: true,
       });
 
       if (response.status === 200) {
