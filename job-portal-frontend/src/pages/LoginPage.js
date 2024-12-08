@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Container, TextField, Button, Typography, Paper, InputAdornment, IconButton,
   ThemeProvider, createTheme, Box, Snackbar, Alert, CircularProgress, Select,
@@ -9,6 +9,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { Visibility, VisibilityOff, Email, Lock, Person, Business, SupervisorAccount } from '@mui/icons-material';
 import "../styles/login.css";
+import { useUserContext } from '../components/UserContext'; // Use the hook
 
 const theme = createTheme({
   palette: {
@@ -66,6 +67,7 @@ const Login = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const { updateUser } = useUserContext(); // Use context hook to manage user state
 
   const validateForm = () => {
     const newErrors = {};
@@ -92,12 +94,20 @@ const Login = () => {
       });
 
       if (response.status === 200) {
+        const userData = response.data;
+
+        // Update context with user data
+        updateUser(userData);
+
         setSnackbarMessage("Login successful! Redirecting...");
         setSnackbarSeverity("success");
         setOpenSnackbar(true);
 
+        // Redirect based on role
         setTimeout(() => {
-          navigate(role === "user" ? "/user-dashboard" : "/recruiter-dashboard");
+          if (role === "user") navigate("/user-dashboard");
+          else if (role === "recruiter") navigate("/recruiter-dashboard");
+          else if (role === "hr") navigate("/JobPostForm");
         }, 1500);
       }
     } catch (error) {
@@ -192,7 +202,6 @@ const Login = () => {
               </span>
             </Typography>
           </Box>
-
 
           <Snackbar
             open={openSnackbar}

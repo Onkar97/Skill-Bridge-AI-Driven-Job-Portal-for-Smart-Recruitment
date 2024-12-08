@@ -1,27 +1,99 @@
-import React, { useContext } from "react";
-import { UserContext } from "../components/UserContext";
+import React from "react";
+import {
+  Container, Card, CardContent, Typography, Avatar, Box, Grid, Paper
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { useUserContext } from "../components/UserContext";
+
+// Styled Components
+const ProfileContainer = styled(Container)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  minHeight: "80vh",
+  padding: theme.spacing(4),
+}));
+
+const ProfileCard = styled(Card)(({ theme }) => ({
+  maxWidth: 600,
+  width: "100%",
+  borderRadius: theme.shape.borderRadius * 2,
+  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+  padding: theme.spacing(3),
+}));
+
+const ProfileHeader = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  marginBottom: theme.spacing(3),
+}));
+
+const InfoRow = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(2),
+  margin: theme.spacing(1, 0),
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: theme.palette.background.default,
+}));
 
 const UserProfile = () => {
-  const context = useContext(UserContext);
-
-  // Ensure context is defined
-  if (!context) {
-    return <p>Error: User context not available!</p>;
-  }
-
-  const { user } = context;
+  const { user } = useUserContext();
 
   if (!user) {
-    return <p>No user logged in.</p>;
+    return <Typography variant="h6" color="error">No user logged in.</Typography>;
   }
 
   return (
-    <div className="profile-container">
-      <h2>User Profile</h2>
-      <p><strong>Name:</strong> {user.name}</p>
-      <p><strong>Email:</strong> {user.email}</p>
-      <p><strong>Role:</strong> {user.role}</p>
-    </div>
+    <ProfileContainer>
+      <ProfileCard>
+        <ProfileHeader>
+          <Avatar
+            sx={{
+              bgcolor: "#457b9d",
+              width: 100,
+              height: 100,
+              fontSize: "2.5rem",
+            }}
+          >
+            {user.name ? user.name[0] : "U"}
+          </Avatar>
+        </ProfileHeader>
+
+        <CardContent>
+          <Typography variant="h4" align="center" gutterBottom>
+            {user.name}
+          </Typography>
+
+          <Typography
+            variant="subtitle1"
+            align="center"
+            color="text.secondary"
+            gutterBottom
+          >
+            {user.email}
+          </Typography>
+
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <InfoRow>
+                <Typography variant="h6">User Details</Typography>
+                <Typography><strong>Email:</strong> {user.email}</Typography>
+                <Typography><strong>Role:</strong> {user.role}</Typography>
+                <Typography><strong>Mobile:</strong> {user.mobile || "Not provided"}</Typography>
+              </InfoRow>
+            </Grid>
+
+            <Grid item xs={12}>
+              <InfoRow>
+                <Typography variant="h6">Other Information</Typography>
+                <Typography><strong>Province:</strong> {user.province || "Not provided"}</Typography>
+                <Typography><strong>City:</strong> {user.city || "Not provided"}</Typography>
+                <Typography><strong>Major:</strong> {user.major || "Not provided"}</Typography>
+              </InfoRow>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </ProfileCard>
+    </ProfileContainer>
   );
 };
 
