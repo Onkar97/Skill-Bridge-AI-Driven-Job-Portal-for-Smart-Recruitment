@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../styles/list.css"
+import "../styles/list.css";
+import { useUserContext } from "../components/UserContext";
 
 const BASE_URL = "http://localhost:8080/api";
 
 const UserJobApplication = () => {
+  const { user } = useUserContext(); // Use UserContext for user data
   const [jobs, setJobs] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
 
@@ -38,7 +40,7 @@ const UserJobApplication = () => {
   const handleApply = async (jobId) => {
     const formData = new FormData();
 
-    const userId = localStorage.getItem("userId");
+    const userId = user?.userId; // Fetch from UserContext
     const resumeFile = document.getElementById(`resume-${jobId}`).files[0];
 
     if (!userId || !resumeFile) {

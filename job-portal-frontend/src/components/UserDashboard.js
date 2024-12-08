@@ -7,11 +7,15 @@ const BASE_URL = "http://localhost:8080/api";
 const UserDashboard = () => {
   const [applications, setApplications] = useState([]);
   const [error, setError] = useState("");
-  const userId = localStorage.getItem("userId"); // Assuming userId is stored in local storage
+  const userId = JSON.parse(localStorage.getItem("user"))?.userId;
 
   useEffect(() => {
-    fetchUserApplications();
-  }, []);
+    if (userId) {
+      fetchUserApplications();
+    } else {
+      setError("User not logged in.");
+    }
+  }, [userId]);
 
   // Fetch user applications
   const fetchUserApplications = async () => {
@@ -39,16 +43,16 @@ const UserDashboard = () => {
         <ul className="application-list">
           {applications.map((app) => (
             <li key={app.id} className="application-item">
-              <h2>{app.job.title || "N/A"}</h2>
-              <p><strong>Company:</strong> {app.job.companyName || "N/A"}</p>
-              <p><strong>Location:</strong> {app.job.location || "N/A"}</p>
-              <p><strong>Application Status:</strong> {app.jobStatus || "Pending"}</p>
+              <h2>{app.job?.title || "N/A"}</h2>
+              <p><strong>Company:</strong> {app.job?.companyName || "N/A"}</p>
+              <p><strong>Location:</strong> {app.job?.location || "N/A"}</p>
+              <p><strong>Status:</strong> {app.jobStatus || "Pending"}</p>
               <a
                 href={`${BASE_URL}/job-application/resumes/user/${userId}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Download Resume
+                View Resume
               </a>
             </li>
           ))}
