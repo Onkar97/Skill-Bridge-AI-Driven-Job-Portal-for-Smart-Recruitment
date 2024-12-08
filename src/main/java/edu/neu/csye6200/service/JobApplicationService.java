@@ -23,7 +23,7 @@ public class JobApplicationService {
     private final JobRepository jobRepository;
     private final JobApplicationRepository jobApplicationRepository;
 
-    private static final String UPLOAD_DIR = "/uploads/";
+    private static final String UPLOAD_DIR = "./uploads";
 
     public JobApplicationService(UserRepository userRepository, JobRepository jobRepository, JobApplicationRepository jobApplicationRepository) {
         this.userRepository = userRepository;

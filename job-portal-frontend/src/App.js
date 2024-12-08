@@ -28,6 +28,7 @@ import UserApplications from "./pages/UserApplications";
 import CompanyList from "./pages/CompanyList";
 import JobManager from "./components/JobManager";
 import UserProfile from "./pages/UserProfile";
+import JobRecommendations from "./components/JobRecommendations";
 
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
         <Route path = "/JobManager" element={<JobManager/>} />
          <Route path="/profile" element={<UserProfile />} />
         <Route path="/my-applications" element={<UserApplications />} />
+        <Route path="/JobRecommendations" element={<JobRecommendations/>} />
 
         <Route path ="/ApplicationConfirmation" element={<ApplicationConfirmation />} />
         <Route path ="/JobSearch" element={<JobSearch />} />
