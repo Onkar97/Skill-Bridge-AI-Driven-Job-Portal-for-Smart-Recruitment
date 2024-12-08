@@ -13,7 +13,7 @@ public class UserEntity {
     private String password;
     private String name;
     private Integer gender;
-    private String birth_year;
+    private Integer birth_year;
     private String nickname;
     private String email;
     private String province;
@@ -23,7 +23,7 @@ public class UserEntity {
     private Integer gra_year;
     private String major;
     private Integer dir_desire;
-    private String role;
+    private Integer role;
 
     // No-argument constructor (required by Hibernate)
     public UserEntity() {
@@ -31,7 +31,7 @@ public class UserEntity {
     }
 
     // Constructor
-    public UserEntity(Integer id, String email, String name, String role) {
+    public UserEntity(Integer id, String email, String name, Integer role) {
         this.user_id = id;
         this.email = email;
         this.name = name;
@@ -79,11 +79,11 @@ public class UserEntity {
         this.gender = gender;
     }
 
-    public String getBirthYear() {
+    public Integer getBirthYear() {
         return birth_year;
     }
 
-    public void setBirthYear(String birth_year) {
+    public void setBirthYear(Integer birth_year) {
         this.birth_year = birth_year;
     }
 
@@ -159,11 +159,11 @@ public class UserEntity {
         this.dir_desire = dir_desire;
     }
 
-    public String getRole() {
+    public Integer getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Integer role) {
         this.role = role;
     }
 }
