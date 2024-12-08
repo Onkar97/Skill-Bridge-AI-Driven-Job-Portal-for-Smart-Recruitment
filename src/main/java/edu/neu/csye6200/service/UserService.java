@@ -1,7 +1,9 @@
 package edu.neu.csye6200.service;
 
-import edu.neu.csye6200.entity.*;
-import edu.neu.csye6200.repository.*;
+import edu.neu.csye6200.entity.ResumeEntity;
+import edu.neu.csye6200.entity.UserEntity;
+import edu.neu.csye6200.repository.ResumeRepository;
+import edu.neu.csye6200.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
@@ -9,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -20,107 +21,139 @@ import java.util.Optional;
 public class UserService {
 
     private static final Logger log = LogManager.getLogger(UserService.class);
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private ResumeRepository resumeRepository;
 
-
+    /**
+     * Retrieve all users.
+     */
     public Iterable<UserEntity> findAll() {
-        log.info("findall");
+        log.info("Fetching all users");
         return userRepository.findAll();
     }
 
-
+    /**
+     * Retrieve user by userId.
+     */
     public Optional<UserEntity> getUser(int userId) {
-        log.info("getUser");
+        log.info("Fetching user with ID: {}", userId);
         return userRepository.findByUserId(userId);
     }
 
-
+    /**
+     * Update user information.
+     */
     public boolean updateUser(UserEntity userEntity) {
-        String password = userEntity.getPassword();
-
-        int result = -1;
         try {
-            String encPass = this.encodeByMd5(password);
+            String password = userEntity.getPassword();
+            String encPass = encodeByMd5(password); // Encrypt the password
             userEntity.setPassword(encPass);
-            result = userRepository.updateUser(userEntity);
-        } catch (NoSuchAlgorithmException e) {
-            System.out.println("md5 failed");
-        }
 
-        if (result > 0) {
-            return true;
+            int result = userRepository.updateUser(userEntity);
+            log.info("User update result for ID {}: {}", userEntity.getUserId(), result > 0);
+            return result > 0;
+
+        } catch (NoSuchAlgorithmException e) {
+            log.error("MD5 encryption failed during update: {}", e.getMessage());
+            return false;
         }
-        return false;
     }
 
-
+    /**
+     * Register a new user.
+     */
     @Transactional
     public boolean registerUser(UserEntity userEntity) {
         String email = userEntity.getEmail();
+
+        // Check if email already exists
         if (userRepository.getUserByEmail(email).isPresent()) {
+            log.warn("User registration failed: Email already exists: {}", email);
             return false;
         }
 
-        String password = userEntity.getPassword();
-
         try {
-            // Encrypt the password using MD5
-            String encPass = this.encodeByMd5(password);
+            // Encrypt the password
+            String encPass = encodeByMd5(userEntity.getPassword());
             userEntity.setPassword(encPass);
 
-            // Save the user entity and flush the changes
-            userEntity = userRepository.saveAndFlush(userEntity);
+            // Save the user entity
+            UserEntity savedUser = userRepository.save(userEntity);
 
+            if (savedUser == null || savedUser.getUserId() == null) {
+                log.error("Failed to save user during registration: {}", email);
+                return false;
+            }
+
+            // Create and save the resume entity
             ResumeEntity resume = new ResumeEntity();
-            resume.setUserId(userEntity.getUserId());
+            resume.setUserId(savedUser.getUserId());
             resumeRepository.save(resume);
 
+            log.info("User registered successfully: {}", email);
             return true;
 
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("MD5 encryption error: " + e.getMessage());
-        }
-
-        return false;
-    }
-
-
-    public boolean loginUser(String email, String password) {
-        if (userRepository.getUserByEmail(email).isEmpty()) {
-            log.warn("no such user: " + email);
+            log.error("Error encrypting password during registration for {}: {}", email, e.getMessage());
+            return false;
+        } catch (Exception e) {
+            log.error("Unexpected error during registration for {}: {}", email, e.getMessage());
             return false;
         }
-        String passwordDB = userRepository.getUserByEmail(email).get().getPassword();
+    }
+
+    /**
+     * Log in a user with email, password, and role validation.
+     */
+    public Optional<UserEntity> loginUser(String email, String password, String role) {
+        Optional<UserEntity> userOptional = userRepository.getUserByEmail(email);
+
+        if (userOptional.isEmpty()) {
+            log.warn("Login failed: No such user with email: {}", email);
+            return Optional.empty();
+        }
+
+        UserEntity user = userOptional.get();
 
         try {
-            if (this.encodeByMd5(password).equals(passwordDB)) {
-                return true;
+            // Validate password
+            if (!encodeByMd5(password).equals(user.getPassword())) {
+                log.warn("Login failed: Password mismatch for email: {}", email);
+                return Optional.empty();
             }
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("md5 wrong");
+            log.error("Password hashing error during login: {}", e.getMessage());
+            return Optional.empty();
         }
-        log.warn("password wrong" );
-        return false;
+
+        // Validate role
+        if (!role.equalsIgnoreCase(user.getRole())) {
+            log.warn("Login failed: Role mismatch for email: {}", email);
+            return Optional.empty();
+        }
+
+        log.info("Login successful for email: {}", email);
+        return Optional.of(user);
     }
 
-
+    /**
+     * Retrieve user by email.
+     */
     public Optional<UserEntity> getUserByEmail(String email) {
-
-        return  userRepository.getUserByEmail(email);
+        log.info("Fetching user by email: {}", email);
+        return userRepository.getUserByEmail(email);
     }
 
-    public String encodeByMd5(String str) throws NoSuchAlgorithmException {
-        // Create MD5 MessageDigest instance
+    /**
+     * Encode a string using MD5 and Base64.
+     */
+    private String encodeByMd5(String str) throws NoSuchAlgorithmException {
         MessageDigest md5 = MessageDigest.getInstance("MD5");
-
-        // Calculate the MD5 digest
         byte[] digest = md5.digest(str.getBytes(StandardCharsets.UTF_8));
-
-        // Encode the MD5 digest in Base64
-
         return Base64.getEncoder().encodeToString(digest);
     }
 }

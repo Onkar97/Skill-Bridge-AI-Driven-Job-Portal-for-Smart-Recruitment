@@ -1,81 +1,65 @@
-import React, { useEffect, useState } from 'react';
-import { fetchUserDetails } from '../service/userService';
-import '../styles/dashboard.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "../styles/dashboard.css";
+
+const BASE_URL = "http://localhost:8080/api";
 
 const UserDashboard = () => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+  const [applications, setApplications] = useState([]);
+  const [error, setError] = useState("");
+  const userId = JSON.parse(localStorage.getItem("user"))?.userId;
 
-    useEffect(() => {
-        fetchUserDetails()
-            .then(userData => {
-                setUser(userData);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error(error);
-                setLoading(false);
-            });
-    }, []);
-
-    if (loading) {
-        return (
-            <div className="loading-container">
-                <div className="spinner"></div>
-                <p>Loading user data...</p>
-            </div>
-        );
+  useEffect(() => {
+    if (userId) {
+      fetchUserApplications();
+    } else {
+      setError("User not logged in.");
     }
+  }, [userId]);
 
-    return (
-        <div className="dashboard-container">
-            <header className="dashboard-header">
-                <h1>Welcome, {user?.name}</h1>
-                <span className="user-status">{user?.status || 'Active'}</span>
-            </header>
+  // Fetch user applications
+  const fetchUserApplications = async () => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/job-application/user/${userId}`
+      );
+      setApplications(response.data || []);
+      setError(""); // Clear previous errors
+    } catch (error) {
+      console.error("Error fetching user applications:", error);
+      setError("Failed to load job applications. Please try again later.");
+    }
+  };
 
-            <div className="dashboard-content">
-                <div className="card user-info">
-                    <h2>Personal Information</h2>
-                    <p><strong>Email:</strong> {user?.email}</p>
-                    <p><strong>Member Since:</strong> {user?.joinDate || 'N/A'}</p>
-                    <p><strong>Last Login:</strong> {user?.lastLogin || 'N/A'}</p>
-                </div>
+  return (
+    <div className="container">
+      <h1>Your Applied Jobs</h1>
 
-                <div className="card user-stats">
-                    <h2>Your Statistics</h2>
-                    <div className="stat-grid">
-                        <div className="stat-item">
-                            <span className="stat-value">{user?.applications.length || 0}</span>
-                            <span className="stat-label">Applications Submitted</span>
-                        </div>
-                        <div className="stat-item">
-                            <span className="stat-value">{user?.interviewsScheduled || 0}</span>
-                            <span className="stat-label">Interviews Scheduled</span>
-                        </div>
-                        <div className="stat-item">
-                            <span className="stat-value">{user?.offersReceived || 0}</span>
-                            <span className="stat-label">Offers Received</span>
-                        </div>
-                    </div>
-                </div>
+      {error && <p className="error-message">{error}</p>}
 
-                <div className="card recent-activity">
-                    <h2>Recent Activity</h2>
-                    <ul>
-                        {user?.recentActivity?.map((activity, index) => (
-                            <li key={index}>{activity}</li>
-                        )) || <li>No recent activity</li>}
-                    </ul>
-                </div>
-            </div>
-
-            <footer className="dashboard-footer">
-                <button className="action-button">Update Profile</button>
-                <button className="action-button">View All Applications</button>
-            </footer>
-        </div>
-    );
+      {applications.length === 0 ? (
+        <p>No job applications found.</p>
+      ) : (
+        <ul className="application-list">
+          {applications.map((app) => (
+            <li key={app.id} className="application-item">
+              <h2>{app.job?.title || "N/A"}</h2>
+              <p><strong>Company:</strong> {app.job?.companyName || "N/A"}</p>
+              <p><strong>Location:</strong> {app.job?.location || "N/A"}</p>
+              <p><strong>Status:</strong> {app.jobStatus || "Pending"}</p>
+              <a
+                href={`${BASE_URL}/job-application/resumes/user/${userId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View Resume
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 };
 
 export default UserDashboard;

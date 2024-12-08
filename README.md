@@ -1,30 +1,103 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/6xRviSdT)
-# Welcome to the course CSYE6200- Concepts of Object Oriented Design
-> Northeastern University, College of Engineering
+`Job Portal Application`
+
+`Overview`
+
+The Job Portal Application is a web-based system that connects job seekers with recruiters and HR managers. It allows users to apply for jobs, manage job postings, and review job applications, depending on their role.
+
+`Project Structure`
+
+/backend          - Java Spring Boot Application (Backend API)
+/frontend         - React.js Application (Frontend UI)
+
+Technologies Used
+
+	•	Frontend: React.js, Material-UI
+	•	Backend: Java Spring Boot, PostgreSQL
+	•	Database: PostgreSQL
+	•	Build Tools: Maven
+
+Features
+
+	•	Job Seekers: Browse job listings, apply for jobs, view application status.
+	•	Recruiters: Review applications, download resumes.
+	•	HR Managers: Post new jobs, manage job applications, create notifications.
 
 
-## Professor: Daniel Peters
+Prerequisites
 
-### Requirements
-1. Eclipse or VS Code or IntelliJ.
+	1.	Java JDK 11+
+	2.	Node.js 14+ (for the frontend)
+	3.	PostgreSQL (database)
+	4.	Maven (for Java build)
+	5.	Git (for version control)
 
-Note: If you are using Eclipse, please have git CLI installed on your system or GitHub Desktop to commit the code in this repository
+Setup and Installation
 
-### SetUp Instructions
-1. Please clone the repository on your local system
-2. For Eclipse Import the project as Existing Maven Project, For IntelliJ you can directlty open it using 'Get from VCS'.
-4. All code should be pushed to the main branch
-3. Ensure the GitHub actions are successful post push
+1. Clone the Repository
+   git clone https://github.com/CSYE-6200-Concepts-of-OOD-Fall-2024-S3/final-project-group6.git
+   cd csye6200
 
-Submissions will have deadlines, failed GitHub Actions would result in point deductions.
+2. Backend Setup
 
-### References
-1. Cloning a Repository: <https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository>
-2. Any GitHub Setup: Please refer to the Git & GitHub Fundamentals Repository shared to you by your respective TA and refer the README.md section
+Navigate to the Backend Folder
 
-Please reach out to your respective TA if you need any help in regards with submission/ GitHub
+start the driver
 
-Author:
-- Rohan Vasudev Ginde (ginde.r@northeastern.edu)
-- Yesha Joshi (joshi.ye@northeastern.edu)
+
+Create PostgreSQL Database
+
+	1.	Open application.yml and set:
+
+       spring.datasource.url=jdbc:postgresql://localhost:5432/jobportal
+spring.datasource.username=your-username
+spring.datasource.password=your-password
+
+    The backend will start at http://localhost:8080.
+3. Frontend Setup
+
+Navigate to the Frontend Folder
+
+`cd frontend`
+
+Install Dependencies
+
+`npm i`
+
+Start the Frontend Application
+
+`npm start`
+
+The frontend will start at http://localhost:3000.
+
+How to Use
+
+	1.	Open http://localhost:3000 in your web browser.
+	2.	Sign Up as a user, recruiter, or HR manager.
+	3.	Login using your credentials.
+	4.	Use the Application:
+	•	Job Seekers: Browse and apply for jobs.
+	•	Recruiters: Manage applications.
+	•	HR Managers: Post jobs and review applications.
+
+API Endpoints
+
+User Endpoints
+
+	•	POST /api/users/register - Register a user
+	•	POST /api/users/login - Login a user
+
+Job Endpoints
+
+	•	GET /api/jobs/all - View all jobs
+	•	POST /api/jobs - Post a new job (HR only)
+
+Application Endpoints
+
+	•	POST /api/job-application - Apply for a job
+	•	GET /api/job-application/user/{userId} - View user applications
+	•	GET /api/job-application/all - View all applications (Recruiters/HR)
+
+
+
+
 

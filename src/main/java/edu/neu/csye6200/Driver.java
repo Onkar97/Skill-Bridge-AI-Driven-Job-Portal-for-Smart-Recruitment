@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
-public class Driver {
+public class
+Driver {
 
 	@RequestMapping("/")
 	String home() {
@@ -21,6 +22,3 @@ public class Driver {
 	}
 
 }
-
-
-

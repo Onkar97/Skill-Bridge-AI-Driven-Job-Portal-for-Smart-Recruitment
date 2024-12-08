@@ -1,8 +1,8 @@
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:5432/postgres
+        url: jdbc:postgresql://localhost:5432/jobportaldb
         username: postgres
-        password: test@vale
+        password: onkar@123
     jpa:
         hibernate:
             ddl-auto: update
@@ -12,6 +12,5 @@ spring:
             hibernate:
                 dialect: org.hibernate.dialect.PostgreSQLDialect
                 format_sql: true
-
-
-
+file:
+    upload-dir: ./uploads

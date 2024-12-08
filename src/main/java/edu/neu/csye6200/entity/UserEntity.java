@@ -2,48 +2,67 @@ package edu.neu.csye6200.entity;
 
 import jakarta.persistence.*;
 
-
 @Entity
-@Table(name = "user", schema = "public")
+@Table(name = "\"user\"")
 public class UserEntity {
+
     @Id
-    private Integer user_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Integer userId;
+
+    @Column(name = "mobile", nullable = false, length = 11)
     private String mobile;
+
+    @Column(name = "password", nullable = false, length = 500)
     private String password;
+
+    @Column(name = "name", length = 50)
     private String name;
+
+    @Column(name = "gender")
     private Integer gender;
-    private Integer birth_year;
+
+    @Column(name = "birth_year")
+    private Integer birthYear;
+
+    @Column(name = "nickname", length = 100)
     private String nickname;
+
+    @Column(name = "email", length = 50)
     private String email;
+
+    @Column(name = "province", length = 50)
     private String province;
+
+    @Column(name = "city", length = 50)
     private String city;
-    private String edu_degree;
+
+    @Column(name = "edu_degree", length = 50)
+    private String eduDegree;
+
+    @Column(name = "graduation", length = 100)
     private String graduation;
-    private Integer gra_year;
+
+    @Column(name = "gra_year")
+    private Integer graYear;
+
+    @Column(name = "major", length = 50)
     private String major;
-    private Integer dir_desire;
+
+    @Column(name = "dir_desire")
+    private Integer dirDesire;
+
+    @Column(name = "role", length = 50)
     private String role;
 
-    // No-argument constructor (required by Hibernate)
-    public UserEntity() {
-        // Hibernate will use this constructor
-    }
-
-    // Constructor
-    public UserEntity(Integer id, String email, String name, String role) {
-        this.user_id = id;
-        this.email = email;
-        this.name = name;
-        this.role = role;
-    }
-
-    // Getters and Setters
+    // Getters and setters
     public Integer getUserId() {
-        return user_id;
+        return userId;
     }
 
-    public void setUserId(Integer user_id) {
-        this.user_id = user_id;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getMobile() {
@@ -79,11 +98,11 @@ public class UserEntity {
     }
 
     public Integer getBirthYear() {
-        return birth_year;
+        return birthYear;
     }
 
-    public void setBirthYear(Integer birth_year) {
-        this.birth_year = birth_year;
+    public void setBirthYear(Integer birthYear) {
+        this.birthYear = birthYear;
     }
 
     public String getNickname() {
@@ -119,11 +138,11 @@ public class UserEntity {
     }
 
     public String getEduDegree() {
-        return edu_degree;
+        return eduDegree;
     }
 
-    public void setEduDegree(String edu_degree) {
-        this.edu_degree = edu_degree;
+    public void setEduDegree(String eduDegree) {
+        this.eduDegree = eduDegree;
     }
 
     public String getGraduation() {
@@ -135,11 +154,11 @@ public class UserEntity {
     }
 
     public Integer getGraYear() {
-        return gra_year;
+        return graYear;
     }
 
-    public void setGraYear(Integer gra_year) {
-        this.gra_year = gra_year;
+    public void setGraYear(Integer graYear) {
+        this.graYear = graYear;
     }
 
     public String getMajor() {
@@ -151,11 +170,11 @@ public class UserEntity {
     }
 
     public Integer getDirDesire() {
-        return dir_desire;
+        return dirDesire;
     }
 
-    public void setDirDesire(Integer dir_desire) {
-        this.dir_desire = dir_desire;
+    public void setDirDesire(Integer dirDesire) {
+        this.dirDesire = dirDesire;
     }
 
     public String getRole() {

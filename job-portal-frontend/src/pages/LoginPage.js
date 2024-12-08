@@ -3,37 +3,26 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import {
   Container, TextField, Button, Typography, Paper, InputAdornment, IconButton,
-  ThemeProvider, createTheme, Box, Checkbox, FormControlLabel, FormControl,
-  InputLabel, Select, MenuItem, Snackbar, Alert, CircularProgress
+  ThemeProvider, createTheme, Box, Snackbar, Alert, CircularProgress, Select,
+  MenuItem, FormControl, InputLabel
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Visibility, VisibilityOff, Email, Lock, Person, Business, SupervisorAccount } from '@mui/icons-material';
-import "../styles/login.css"
+import "../styles/login.css";
+import { useUserContext } from '../components/UserContext'; // Use the hook
+
 const theme = createTheme({
   palette: {
-    primary: {
-      main: '#0a66c2', // LinkedIn Blue
-    },
-    secondary: {
-      main: '#f3f2ef', // LinkedIn Light Gray
-    },
-    background: {
-      default: '#f3f2ef', // LinkedIn Background
-    },
+    primary: { main: '#1d3557' },
+    secondary: { main: '#457b9d' },
+    background: { default: '#f1faee' },
   },
   typography: {
-    fontFamily: "'Roboto', sans-serif",
-    h3: {
-      fontWeight: 700,
-    },
-    body1: {
-      fontSize: '1rem',
-      color: '#5e5e5e',
-    },
+    fontFamily: "'Poppins', sans-serif",
+    h3: { fontWeight: 600 },
+    body1: { fontSize: '1rem', color: '#333' },
   },
-  shape: {
-    borderRadius: 12,
-  },
+  shape: { borderRadius: 16 },
 });
 
 const LoginContainer = styled(Container)(({ theme }) => ({
@@ -42,59 +31,48 @@ const LoginContainer = styled(Container)(({ theme }) => ({
   alignItems: 'center',
   minHeight: '100vh',
   backgroundColor: theme.palette.background.default,
+  padding: '20px',
 }));
 
 const LoginPaper = styled(Paper)(({ theme }) => ({
   width: '100%',
-  maxWidth: '420px',
+  maxWidth: '400px',
   padding: theme.spacing(4),
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   borderRadius: theme.shape.borderRadius,
-  boxShadow: '0 8px 40px rgba(0, 0, 0, 0.12)',
-}));
-
-const Logo = styled('div')(() => ({
-  marginBottom: '20px',
-  fontSize: '24px',
-  fontWeight: 'bold',
-  color: '#0a66c2',
-  textAlign: 'center',
+  boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  marginTop: theme.spacing(3),
-  padding: theme.spacing(1.5),
+  marginTop: theme.spacing(2),
+  padding: theme.spacing(1.2),
   fontWeight: 600,
-  textTransform: 'none',
+  textTransform: 'capitalize',
   fontSize: '1rem',
   backgroundColor: theme.palette.primary.main,
   color: '#fff',
-  '&:hover': {
-    backgroundColor: '#004182',
-  },
+  '&:hover': { backgroundColor: theme.palette.primary.dark },
 }));
 
-const Login = ({ onLogin }) => {
-  const [identifier, setIdentifier] = useState('');
+const Login = () => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('user');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const { updateUser } = useUserContext(); // Use context hook to manage user state
 
   const validateForm = () => {
     const newErrors = {};
-    if (!identifier) newErrors.identifier = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(identifier)) newErrors.identifier = 'Invalid email format';
+    if (!email) newErrors.email = 'Email is required';
     if (!password) newErrors.password = 'Password is required';
-    else if (password.length < 8) newErrors.password = 'Password must be at least 8 characters long';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -103,25 +81,39 @@ const Login = ({ onLogin }) => {
     event.preventDefault();
     if (!validateForm()) return;
     setLoading(true);
+
+    const payload = {
+      email,
+      password,
+      role,
+    };
+
     try {
-      const response = await axios.post('http://localhost:3000/api/login', { identifier, password, role });
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        if (rememberMe) localStorage.setItem('rememberMe', 'true');
-        onLogin();
-        setSnackbarMessage('Login successful! Redirecting...');
-        setSnackbarSeverity('success');
+      const response = await axios.post("http://localhost:8080/api/users/login", payload, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.status === 200) {
+        const userData = response.data;
+
+        // Update context with user data
+        updateUser(userData);
+
+        setSnackbarMessage("Login successful! Redirecting...");
+        setSnackbarSeverity("success");
         setOpenSnackbar(true);
+
+        // Redirect based on role
         setTimeout(() => {
-          navigate(role === 'user' ? '/user-dashboard' : '/recruiter-dashboard');
+          if (role === "user") navigate("/user-dashboard");
+          else if (role === "recruiter") navigate("/recruiter-dashboard");
+          else if (role === "hr") navigate("/JobPostForm");
         }, 1500);
-      } else {
-        throw new Error('Login failed: No token received.');
       }
     } catch (error) {
-      console.error('Login error:', error);
-      setSnackbarMessage('Login failed. Please check your credentials and try again.');
-      setSnackbarSeverity('error');
+      console.error("Login error:", error);
+      setSnackbarMessage("Login failed. Please check your credentials.");
+      setSnackbarSeverity("error");
       setOpenSnackbar(true);
     } finally {
       setLoading(false);
@@ -132,89 +124,85 @@ const Login = ({ onLogin }) => {
     <ThemeProvider theme={theme}>
       <LoginContainer>
         <LoginPaper>
-          <Logo>WORKWAVES</Logo>
-          <Typography variant="h3" color="primary" gutterBottom>
-            Sign in
-          </Typography>
-          <Typography variant="body1" gutterBottom align="center">
-            Stay updated on your professional world
+          <Typography variant="h3" gutterBottom color="primary">
+            Login
           </Typography>
           <form onSubmit={handleLogin} style={{ width: '100%' }}>
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Email"
-              variant="outlined"
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              required
-              error={!!errors.identifier}
-              helperText={errors.identifier}
-              disabled={loading}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Email />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Password"
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              error={!!errors.password}
-              helperText={errors.password}
-              disabled={loading}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Lock />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <FormControl fullWidth margin="normal">
-              <InputLabel>Role</InputLabel>
-              <Select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
+            <Box mb={2}>
+              <TextField
+                fullWidth
+                label="Email"
+                variant="outlined"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={loading}
-              >
-                <MenuItem value="user"><Person /> User</MenuItem>
-                <MenuItem value="recruiter"><Business /> Recruiter</MenuItem>
-                <MenuItem value="hr"><SupervisorAccount /> HR/Manager</MenuItem>
-              </Select>
-            </FormControl>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
-              <FormControlLabel
-                control={<Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />}
-                label="Remember me"
+                error={!!errors.email}
+                helperText={errors.email}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Email />
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Box>
-            <StyledButton
-              type="submit"
-              fullWidth
-              disabled={loading}
-            >
-              {loading ? <CircularProgress size={24} /> : 'Sign in'}
+
+            <Box mb={2}>
+              <TextField
+                fullWidth
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                error={!!errors.password}
+                helperText={errors.password}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
+
+            <Box mb={2}>
+              <FormControl fullWidth>
+                <InputLabel>Role</InputLabel>
+                <Select value={role} onChange={(e) => setRole(e.target.value)} required>
+                  <MenuItem value="user"><Person /> User</MenuItem>
+                  <MenuItem value="recruiter"><Business /> Recruiter</MenuItem>
+                  <MenuItem value="hr"><SupervisorAccount /> HR/Manager</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+
+            <StyledButton type="submit" fullWidth disabled={loading}>
+              {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign in'}
             </StyledButton>
           </form>
+
+          <Box mt={2}>
+            <Typography>
+              Don't have an account?{' '}
+              <span
+                style={{ color: theme.palette.primary.main, cursor: 'pointer', fontWeight: 'bold' }}
+                onClick={() => navigate('/RegistrationPage')}
+              >
+                Sign Up Here
+              </span>
+            </Typography>
+          </Box>
+
           <Snackbar
             open={openSnackbar}
             autoHideDuration={6000}

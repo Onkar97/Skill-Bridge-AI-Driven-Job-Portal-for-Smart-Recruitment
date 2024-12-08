@@ -1,102 +1,146 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "../styles/form.css";
 
-const BASE_URL = "http://localhost:8080"; // Update with your backend URL
+const BASE_URL = "http://localhost:8080";
 
 const JobPostForm = () => {
   const [formData, setFormData] = useState({
     title: "",
-    description: "" ,
-    location: "" ,
+    description: "",
+    location: "",
     salary: "",
     companyName: "",
-    jobStatus: "active", // Default status
+    postedBy: "",
+    jobStatus: "active",
   });
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  const validateForm = () => {
+    if (!formData.title || !formData.description || !formData.location || !formData.companyName || !formData.postedBy) {
+      return "All fields except salary are required.";
+    }
+    if (formData.salary && isNaN(formData.salary)) {
+      return "Salary must be a valid number.";
+    }
+    return null;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage(""); // Clear previous errors
+    const validationError = validateForm();
+    if (validationError) {
+      setErrorMessage(validationError);
+      return;
+    }
+
+    setLoading(true);
     try {
-      // Using the API endpoint to post job data
-      const response = await axios.post(`${BASE_URL}/api/jobs`, formData, {
-        headers: {
-          "Content-Type": "application/json", // JSON for basic form data
-        },
+      await axios.post(`${BASE_URL}/api/jobs`, formData, {
+        headers: { "Content-Type": "application/json" },
       });
       alert("Job posted successfully!");
+      setFormData({
+        title: "",
+        description: "",
+        location: "",
+        salary: "",
+        companyName: "",
+        postedBy: "",
+        jobStatus: "active",
+      });
     } catch (error) {
       console.error("Error posting job:", error);
-      alert("Failed to post job. Please try again.");
+      if (error.response?.data) {
+        setErrorMessage(error.response.data.error || "An unexpected error occurred.");
+      } else {
+        setErrorMessage("Failed to connect to the server. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Job Title:
+    <div className="form-container">
+      <h2 className="form-heading">Post a New Job</h2>
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="title">Job Title:</label>
         <input
           type="text"
+          id="title"
           name="title"
           value={formData.title}
           onChange={handleChange}
+          placeholder="Enter the job title"
           required
         />
-      </label>
-      <label>
-        Description:
+
+        <label htmlFor="description">Description:</label>
         <textarea
+          id="description"
           name="description"
           value={formData.description}
           onChange={handleChange}
+          placeholder="Enter a brief job description"
           required
         ></textarea>
-      </label>
-      <label>
-        Location:
+
+        <label htmlFor="location">Location:</label>
         <input
           type="text"
+          id="location"
           name="location"
           value={formData.location}
           onChange={handleChange}
+          placeholder="Enter the job location"
           required
         />
-      </label>
-      <label>
-        Salary:
+
+        <label htmlFor="salary">Salary (Optional):</label>
         <input
           type="number"
+          id="salary"
           name="salary"
           value={formData.salary}
           onChange={handleChange}
-          required
+          placeholder="Enter the salary"
         />
-      </label>
-      <label>
-        Company Name:
+
+        <label htmlFor="companyName">Company Name:</label>
         <input
           type="text"
+          id="companyName"
           name="companyName"
           value={formData.companyName}
           onChange={handleChange}
+          placeholder="Enter the company name"
           required
         />
-      </label>
-      <label>
-        Posted By:
+
+        <label htmlFor="postedBy">Posted By:</label>
         <input
           type="text"
+          id="postedBy"
           name="postedBy"
           value={formData.postedBy}
           onChange={handleChange}
+          placeholder="Enter your name"
+          required
         />
-      </label>
-      <label>
-        Job Status:
+
+        <label htmlFor="jobStatus">Job Status:</label>
         <select
+          id="jobStatus"
           name="jobStatus"
           value={formData.jobStatus}
           onChange={handleChange}
@@ -104,9 +148,16 @@ const JobPostForm = () => {
           <option value="active">Active</option>
           <option value="closed">Closed</option>
         </select>
-      </label>
-      <button type="submit">Post Job</button>
-    </form>
+
+        <button
+          type="submit"
+          className="submit-btn"
+          disabled={loading}
+        >
+          {loading ? "Posting..." : "Post Job"}
+        </button>
+      </form>
+    </div>
   );
 };
 
