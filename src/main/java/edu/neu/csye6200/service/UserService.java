@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -111,7 +112,7 @@ public class UserService {
         }
 
         // Check role
-        if (!String.valueOf(role).equals(user.getRole())) {
+        if (!Objects.equals(user.getRole(), role)) {
             log.warn("Role mismatch for user: " + email);
             return false;
         }
