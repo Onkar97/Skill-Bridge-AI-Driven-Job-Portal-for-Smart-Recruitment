@@ -10,7 +10,7 @@ const RegistrationPage = () => {
         password: "",
         gender: "",
         birthYear: "",
-        role: "JOB_SEEKER",
+        role: "user",
         nickname: "",
         province: "",
         city: "",
@@ -32,22 +32,16 @@ const RegistrationPage = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        // Correctly map gender and role
         const genderMapping = {
             MALE: 1,
             FEMALE: 2,
             OTHER: 3,
         };
 
-        const roleMapping = {
-            JOB_SEEKER: 1,
-            RECRUITER: 2,
-            HR_MANAGER: 3,
-        };
-
         const dataToSend = {
             ...formData,
             gender: genderMapping[formData.gender] || null,
-            role: roleMapping[formData.role] || null,
             dirDesire: formData.dirDesire ? parseInt(formData.dirDesire) : null,
             graYear: formData.graYear ? parseInt(formData.graYear) : null,
             birthYear: formData.birthYear ? parseInt(formData.birthYear) : null,
@@ -61,7 +55,7 @@ const RegistrationPage = () => {
             .then((response) => {
                 if (response.ok) {
                     alert("Registration successful!");
-                    navigate("/login"); // Redirect to login page after success
+                    navigate("/login");
                 } else {
                     alert("Registration failed. Please try again.");
                 }
@@ -69,13 +63,14 @@ const RegistrationPage = () => {
             .catch((error) => console.error("Error during registration:", error));
     };
 
+
     const renderPageOne = () => (
         <div>
             <h2>Step 1: Basic Information</h2>
             <div className="form-group">
                 <label>Email: <span className="required">*</span></label>
                 <input
-                    type="text"
+                    type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
@@ -91,13 +86,13 @@ const RegistrationPage = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    placeholder="Enter your name"
+                    placeholder="Enter your full name"
                 />
             </div>
             <div className="form-group">
                 <label>Mobile: <span className="required">*</span></label>
                 <input
-                    type="text"
+                    type="tel"
                     name="mobile"
                     value={formData.mobile}
                     onChange={handleChange}
@@ -139,9 +134,9 @@ const RegistrationPage = () => {
             <div className="form-group">
                 <label>Role: <span className="required">*</span></label>
                 <select name="role" value={formData.role} onChange={handleChange} required>
-                    <option value="JOB_SEEKER">Job Seeker</option>
-                    <option value="RECRUITER">Recruiter</option>
-                    <option value="HR_MANAGER">HR Manager</option>
+                    <option value="user">Job Seeker</option>
+                    <option value="recruiter">Recruiter</option>
+                    <option value="hr">HR Manager</option>
                 </select>
             </div>
             <button type="button" className="next-btn" onClick={() => setPage(2)}>
@@ -230,7 +225,7 @@ const RegistrationPage = () => {
                     name="dirDesire"
                     value={formData.dirDesire}
                     onChange={handleChange}
-                    placeholder="Enter your desired direction (1/2/3)"
+                    placeholder="Enter desired direction (1/2/3)"
                 />
             </div>
             <button type="button" className="back-btn" onClick={() => setPage(1)}>

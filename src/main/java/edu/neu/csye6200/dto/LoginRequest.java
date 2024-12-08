@@ -3,16 +3,9 @@ package edu.neu.csye6200.dto;
 public class LoginRequest {
     private String email;
     private String password;
-    private Integer role; // Add role here (assuming role is an integer)
+    private String role;
 
-    // Constructor
-    public LoginRequest(String email, String password, Integer role) {
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
-
-    // Getters and Setters
+    // Getters and setters
     public String getEmail() {
         return email;
     }
@@ -29,11 +22,11 @@ public class LoginRequest {
         this.password = password;
     }
 
-    public Integer getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Integer role) {
+    public void setRole(String role) {
         this.role = role;
     }
 }

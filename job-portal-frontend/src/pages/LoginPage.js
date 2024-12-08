@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Container, TextField, Button, Typography, Paper, InputAdornment, IconButton,
-  ThemeProvider, createTheme, Box, Checkbox, FormControlLabel, Snackbar, Alert,
-  CircularProgress, Link, Select, MenuItem, FormControl, InputLabel
+  ThemeProvider, createTheme, Box, Snackbar, Alert, CircularProgress, Select,
+  MenuItem, FormControl, InputLabel
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import {
-  Visibility, VisibilityOff, Email, Lock, Person, Business, SupervisorAccount,
-} from '@mui/icons-material';
+import { Visibility, VisibilityOff, Email, Lock, Person, Business, SupervisorAccount } from '@mui/icons-material';
 import "../styles/login.css";
 
 const theme = createTheme({
@@ -25,12 +23,6 @@ const theme = createTheme({
   },
   shape: { borderRadius: 16 },
 });
-
-const roleMapping = {
-  user: 1,
-  recruiter: 2,
-  hr: 3,
-};
 
 const LoginContainer = styled(Container)(({ theme }) => ({
   display: 'flex',
@@ -91,10 +83,8 @@ const Login = () => {
     const payload = {
       email,
       password,
-      role: roleMapping[role],
+      role,
     };
-
-    console.log("Payload being sent:", payload);
 
     try {
       const response = await axios.post("http://localhost:8080/api/users/login", payload, {
@@ -190,6 +180,19 @@ const Login = () => {
               {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign in'}
             </StyledButton>
           </form>
+
+          <Box mt={2}>
+            <Typography>
+              Don't have an account?{' '}
+              <span
+                style={{ color: theme.palette.primary.main, cursor: 'pointer', fontWeight: 'bold' }}
+                onClick={() => navigate('/RegistrationPage')}
+              >
+                Sign Up Here
+              </span>
+            </Typography>
+          </Box>
+
 
           <Snackbar
             open={openSnackbar}

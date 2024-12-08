@@ -1,6 +1,6 @@
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:5432/jobportaldb
+        url: jdbc:postgresql://localhost:5432/jobporteldb
         username: postgres
         password: onkar@123
     jpa:
