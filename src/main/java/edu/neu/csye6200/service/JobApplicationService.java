@@ -23,7 +23,7 @@ public class JobApplicationService {
     private final JobRepository jobRepository;
     private final JobApplicationRepository jobApplicationRepository;
 
-    private static final String UPLOAD_DIR = "/uploads/";
+    private static final String UPLOAD_DIR = "./uploads";
 
     public JobApplicationService(UserRepository userRepository, JobRepository jobRepository, JobApplicationRepository jobApplicationRepository) {
         this.userRepository = userRepository;
@@ -78,4 +78,30 @@ public class JobApplicationService {
                 .toList();
     }
 
+
+
+    public JobApplication findByUserId(Long userId) {
+        List<JobApplication> jobApplications = jobApplicationRepository.findByUserId(userId);
+
+        if (jobApplications.isEmpty()) {
+            throw new IllegalArgumentException("No job application found for user ID: " + userId);
+        }
+
+        return jobApplications.get(0);
+    }
+
+
+    public List<JobApplicationResponse> getAllJobsApplicationsUsingJobId(Long jobId) {
+
+        List<JobApplication> jobApplicationList = jobApplicationRepository.findByJobId(jobId);
+
+        return jobApplicationList.stream()
+                .map(jobApplication -> new JobApplicationResponse(
+                        "Job application retrieved successfully!",
+                        jobApplication.getResumePath(),
+                        jobApplication.getJob().getId(),
+                        jobApplication.getUser().getEmail()
+                ))
+                .toList();
+    }
 }
