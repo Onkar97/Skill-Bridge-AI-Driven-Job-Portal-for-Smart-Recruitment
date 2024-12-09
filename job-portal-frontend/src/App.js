@@ -13,6 +13,7 @@ import NotificationList from "./components/NotificationList";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import Header from "./components/Header";
+
 import CompanyForm from "./pages/CompanyForm";
 import JobManagement from "./pages/JobManagement";
 import RegistrationPage from "./pages/RegistrationPage";
@@ -180,7 +181,14 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-
+<Route
+        path="/recruiter-dashboard"
+        element={
+          <ProtectedRoute allowedRoles={["recruiter"]}>
+            <RecruiterDashboard />
+          </ProtectedRoute>
+        }
+      />
       {/* Recruiter- and HR-Specific Routes */}
       <Route
         path="/JobApplicationsList"

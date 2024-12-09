@@ -75,7 +75,7 @@ const JobRecommendations = () => {
             <div key={job.id} className="job-card">
               <h3 className="job-title">{job.title}</h3>
               <p>
-                <strong>Company:</strong> {job.companyName}
+                <strong>Company:</strong> {job.company.name}
               </p>
               <p>
                 <strong>Location:</strong> {job.location}
