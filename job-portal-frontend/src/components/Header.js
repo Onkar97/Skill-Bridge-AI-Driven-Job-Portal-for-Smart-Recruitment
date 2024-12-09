@@ -48,6 +48,7 @@ const Header = () => {
         { text: 'Create Job', icon: <CreateIcon />, path: '/JobPostForm' },
         { text: 'Jobs Posted', icon: <WorkIcon />, path: '/JobApplicationsList' },
         //{ text: 'Create Notification', icon: <CreateIcon />, path: '/create' }
+        { text: 'Add Company', icon: <WorkIcon />, path: '/CompanyForm' },
       ]
     };
 

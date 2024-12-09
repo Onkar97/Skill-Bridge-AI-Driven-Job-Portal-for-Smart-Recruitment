@@ -216,6 +216,14 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+       <Route
+              path="/CompanyForm"
+              element={
+                <ProtectedRoute allowedRoles={["hr"]}>
+                  <ApplicationManagement />
+                </ProtectedRoute>
+              }
+            />
 
       {/* Fallback Route */}
       <Route path="*" element={<HomePage />} />
