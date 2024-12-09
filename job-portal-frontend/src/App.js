@@ -31,6 +31,7 @@ import JobManager from "./components/JobManager";
 import UserProfile from "./pages/UserProfile";
 import JobRecommendations from "./components/JobRecommendations";
 import RecruiterDashboard from "./components/RecruiterDashboard";
+
 console.log("App.js: Application initialized.");
 
 // Role-based Protected Route Component
@@ -64,52 +65,164 @@ function AppRoutes() {
   }
 
   return (
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<HomePage />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/RegistrationPage" element={<RegistrationPage />} />
+      <Route path="/login" element={<LoginPage />} />
 
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/RegistrationPage" element={<RegistrationPage />} />
-          <Route path="/login" element={<LoginPage />} />
+      {/* Shared Routes for Logged-In Users */}
+      <Route
+        path="/notifications"
+        element={
+          <ProtectedRoute allowedRoles={["user"]}>
+            <NotificationList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute allowedRoles={["user", "recruiter", "hr"]}>
+            <UserProfile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/JobApplicationForm"
+        element={<ProtectedRoute><JobApplicationForm /></ProtectedRoute>}
+      />
+      <Route
+        path="/CompanyForm"
+        element={<ProtectedRoute><CompanyForm /></ProtectedRoute>}
+      />
+      <Route
+        path="/JobManagement"
+        element={<ProtectedRoute><JobManagement /></ProtectedRoute>}
+      />
+      <Route
+        path="/DashboardPage"
+        element={<ProtectedRoute><RecruiterDashboard /></ProtectedRoute>}
+      />
+      <Route
+        path="/JobDetails"
+        element={<ProtectedRoute><JobDetails /></ProtectedRoute>}
+      />
+      <Route
+        path="/ResumeViewer"
+        element={<ProtectedRoute><ResumeViewer /></ProtectedRoute>}
+      />
+      <Route
+        path="/CompanyDetails"
+        element={<ProtectedRoute><CompanyDetails /></ProtectedRoute>}
+      />
+      <Route
+        path="/JobManager"
+        element={<ProtectedRoute><JobManager /></ProtectedRoute>}
+      />
 
-          {/* Shared Routes for Logged-In Users */}
-          <Route path="/notifications" element={<ProtectedRoute allowedRoles={['user']}><NotificationList /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute allowedRoles={['user', 'recruiter', 'hr']}><UserProfile /></ProtectedRoute>} />
-          <Route path="/JobApplicationForm" element={<ProtectedRoute><JobApplicationForm /></ProtectedRoute>} />
-          <Route path="/CompanyForm" element={<ProtectedRoute><CompanyForm /></ProtectedRoute>} />
-          <Route path="/JobManagement" element={<ProtectedRoute><JobManagement /></ProtectedRoute>} />
-          <Route path="/DashboardPage" element={<ProtectedRoute><RecruiterDashboard /></ProtectedRoute>} />
-          <Route path="/JobDetails" element={<ProtectedRoute><JobDetails /></ProtectedRoute>} />
-          <Route path="/ResumeViewer" element={<ProtectedRoute><ResumeViewer /></ProtectedRoute>} />
-          <Route path="/CompanyDetails" element={<ProtectedRoute><CompanyDetails /></ProtectedRoute>} />
-          <Route path="/JobManager" element={<ProtectedRoute><JobManager /></ProtectedRoute>} />
+      {/* User-Specific Routes */}
+      <Route
+        path="/JobList"
+        element={
+          <ProtectedRoute allowedRoles={["user"]}>
+            <JobList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/CompanyList"
+        element={
+          <ProtectedRoute allowedRoles={["user"]}>
+            <CompanyList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/JobRecommendations"
+        element={
+          <ProtectedRoute allowedRoles={["user"]}>
+            <JobRecommendations />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/my-applications"
+        element={
+          <ProtectedRoute allowedRoles={["user"]}>
+            <UserApplications />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ApplicationConfirmation"
+        element={
+          <ProtectedRoute allowedRoles={["user"]}>
+            <ApplicationConfirmation />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/JobSearch"
+        element={
+          <ProtectedRoute allowedRoles={["user"]}>
+            <JobSearch />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ResumeUpload"
+        element={
+          <ProtectedRoute allowedRoles={["user"]}>
+            <ResumeUpload />
+          </ProtectedRoute>
+        }
+      />
 
-          {/* User-Specific Routes */}
-          <Route path="/user-dashboard" element={<ProtectedRoute allowedRoles={['user']}><UserDashboard /></ProtectedRoute>} />
-          <Route path="/JobList" element={<ProtectedRoute allowedRoles={['user']}><JobList /></ProtectedRoute>} />
-          <Route path="/CompanyList" element={<ProtectedRoute allowedRoles={['user']}><CompanyList /></ProtectedRoute>} />
-          <Route path="/JobRecommendations" element={<ProtectedRoute allowedRoles={['user']}><JobRecommendations /></ProtectedRoute>} />
-          <Route path="/my-applications" element={<ProtectedRoute allowedRoles={['user']}><UserApplications /></ProtectedRoute>} />
-          <Route path="/ApplicationConfirmation" element={<ProtectedRoute allowedRoles={['user']}><ApplicationConfirmation /></ProtectedRoute>} />
-          <Route path="/JobSearch" element={<ProtectedRoute allowedRoles={['user']}><JobSearch /></ProtectedRoute>} />
-          <Route path="/ResumeUpload" element={<ProtectedRoute allowedRoles={['user']}><ResumeUpload /></ProtectedRoute>} />
+      {/* Recruiter- and HR-Specific Routes */}
+      <Route
+        path="/JobApplicationsList"
+        element={
+          <ProtectedRoute allowedRoles={["recruiter", "hr"]}>
+            <JobApplicationsList />
+          </ProtectedRoute>
+        }
+      />
 
-          {/* Recruiter-Specific Routes */}
-          <Route path="/recruiter-dashboard" element={<ProtectedRoute allowedRoles={['recruiter']}><RecruiterDashboard /></ProtectedRoute>} />
-          <Route path="/JobApplicationsList" element={<ProtectedRoute allowedRoles={['recruiter']}><JobApplicationsList /></ProtectedRoute>} />
+      {/* HR-Specific Routes */}
+      <Route
+        path="/JobPostForm"
+        element={
+          <ProtectedRoute allowedRoles={["hr"]}>
+            <JobPostForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/create"
+        element={
+          <ProtectedRoute allowedRoles={["hr"]}>
+            <CreateNotification />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ApplicationManagement"
+        element={
+          <ProtectedRoute allowedRoles={["hr"]}>
+            <ApplicationManagement />
+          </ProtectedRoute>
+        }
+      />
 
-          {/* HR-Specific Routes */}
-          <Route path="/JobPostForm" element={<ProtectedRoute allowedRoles={['hr']}><JobPostForm /></ProtectedRoute>} />
-          <Route path="/create" element={<ProtectedRoute allowedRoles={['hr']}><CreateNotification /></ProtectedRoute>} />
-          <Route path="/ApplicationManagement" element={<ProtectedRoute allowedRoles={['hr']}><ApplicationManagement /></ProtectedRoute>} />
-
-          {/* Fallback Route */}
-          <Route path="*" element={<HomePage />} />
-        </Routes>
-
+      {/* Fallback Route */}
+      <Route path="*" element={<HomePage />} />
+    </Routes>
   );
 }
+
 function App() {
   return (
     <UserProvider>
@@ -120,4 +233,5 @@ function App() {
     </UserProvider>
   );
 }
+
 export default App;

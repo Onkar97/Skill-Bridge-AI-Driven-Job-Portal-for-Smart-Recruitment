@@ -1,38 +1,99 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../styles/dashboard.css"; // Assuming CSS for better styling
+import "../styles/dashboard.css";
+import { useUserContext } from "../components/UserContext";
 
+// API Base URL
 const BASE_URL = "http://localhost:8080/api";
 
 const RecruiterDashboard = () => {
+  const { user } = useUserContext(); // Get user context
   const [applications, setApplications] = useState([]);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchApplications();
-  }, []);
+    if (user && user.userId) {
+      fetchApplications();
+    }
+  }, [user]);
 
-  // Fetch job applications
+  // Fetch job applications from the backend
   const fetchApplications = async () => {
     setLoading(true);
-    try {
-      const response = await axios.get(`${BASE_URL}/job-application/all`);
-      const validApplications = response.data.filter(
-        (app) => app && app.job && app.user
-      );
+    setError(""); // Clear any existing error
 
-      if (validApplications.length === 0) {
-        setError("No complete applications found.");
+    try {
+      const response = await axios.get(`${BASE_URL}/job-application/all`, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.status === 200 && Array.isArray(response.data)) {
+        const enrichedApplications = await Promise.all(
+          response.data.map(async (app) => {
+            const jobDetails = await fetchJobDetails(app.jobId);
+            return {
+              ...app,
+              jobTitle: jobDetails?.title || "N/A",
+              jobLocation: jobDetails?.location || "N/A",
+            };
+          })
+        );
+
+        setApplications(enrichedApplications);
+        if (enrichedApplications.length === 0) {
+          setError("No job applications found.");
+        }
       } else {
-        setApplications(validApplications);
-        setError(""); // Clear previous errors
+        setError("Unexpected response from the server.");
       }
     } catch (error) {
       console.error("Error fetching applications:", error);
-      setError("Failed to load applications. Please try again later.");
+      setError(
+        `Failed to load applications. Server responded with: ${error.response?.status || "unknown"}`
+      );
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Fetch job details by job ID
+  const fetchJobDetails = async (jobId) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/jobs/details`, {
+        params: { jobId },
+      });
+
+      if (response.status === 200) {
+        return response.data; // Return job details
+      } else {
+        console.warn(`Job with ID ${jobId} not found.`);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching job details:", error);
+      return null;
+    }
+  };
+
+  // Handle resume download
+  const handleDownloadResume = async (email) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/users/find`, {
+        params: { email },
+      });
+
+      const userId = response.data?.userId;
+
+      if (userId) {
+        const resumeDownloadUrl = `${BASE_URL}/job-application/resumes/user?userId=${userId}`;
+        window.open(resumeDownloadUrl, "_blank", "noopener noreferrer");
+      } else {
+        setError(`No resume found for email: ${email}`);
+      }
+    } catch (error) {
+      console.error("Error downloading resume:", error);
+      setError("Error downloading resume.");
     }
   };
 
@@ -45,19 +106,20 @@ const RecruiterDashboard = () => {
 
       <ul className="application-list">
         {applications.map((app) => (
-          <li key={app.id} className="application-item">
-            <h2>{app.job.title || "N/A"}</h2>
-            <p><strong>Applicant Name:</strong> {app.user.name || "N/A"}</p>
-            <p><strong>Email:</strong> {app.user.email || "N/A"}</p>
-
-            <a
-              href={`${BASE_URL}/job-application/resumes/${app.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
+          <li key={app.jobId} className="application-item">
+            <h2>Job Title: {app.jobTitle}</h2>
+            <p>
+              <strong>Location:</strong> {app.jobLocation}
+            </p>
+            <p>
+              <strong>Applicant Email:</strong> {app.userEmail || "N/A"}
+            </p>
+            <button
               className="download-link"
+              onClick={() => handleDownloadResume(app.userEmail)}
             >
               Download Resume
-            </a>
+            </button>
           </li>
         ))}
       </ul>

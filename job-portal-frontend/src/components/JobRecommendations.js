@@ -1,35 +1,66 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Modal from "react-modal";
 import "../styles/recommendations.css";
+import { useUserContext } from "../components/UserContext";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://localhost:8080/api";
 
-const JobRecommendations = ({ userId }) => {
+const JobRecommendations = () => {
+  const { user } = useUserContext(); // Fetch user context
   const [recommendedJobs, setRecommendedJobs] = useState([]);
-  const [selectedJob, setSelectedJob] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch Recommendations
   useEffect(() => {
-    if (userId) {
-      axios
-        .get(`${BASE_URL}/api/job-recommendations/recommend?userId=${userId}`)
-        .then((response) => setRecommendedJobs(response.data))
-        .catch((error) => console.error("Error fetching recommendations:", error));
+    if (user?.userId) {
+      fetchRecommendations(user.userId);
     }
-  }, [userId]);
+  }, [user]);
 
-  // View Job Details
-  const handleViewJob = (job) => {
-    setSelectedJob(job);
-    setIsModalOpen(true);
+  const fetchRecommendations = async (userId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/job-recommendations/recommend?userId=${userId}`
+      );
+      if (response.status === 200 && Array.isArray(response.data)) {
+        setRecommendedJobs(response.data);
+      } else {
+        setRecommendedJobs([]);
+      }
+    } catch (error) {
+      console.error("Error fetching recommendations:", error);
+    }
   };
 
-  // Close Modal
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedJob(null);
+  // Handle Job Application
+  const handleApply = async (jobId) => {
+    const formData = new FormData();
+    const resumeInput = document.getElementById(`resume-${jobId}`);
+    const resumeFile = resumeInput?.files[0];
+
+    if (!user?.userId || !resumeFile) {
+      alert("User ID or resume file is missing!");
+      return;
+    }
+
+    formData.append("userId", user.userId);
+    formData.append("jobId", jobId);
+    formData.append("resumeFile", resumeFile);
+
+    try {
+      await axios.post(`${BASE_URL}/job-application`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      alert("Application submitted successfully!");
+      resumeInput.value = ""; // Clear file input on success
+    } catch (error) {
+      console.error("Error applying for job:", error);
+      alert(
+        `Application failed: ${
+          error.response?.data?.message || "Unknown server error"
+        }`
+      );
+    }
   };
 
   return (
@@ -37,52 +68,44 @@ const JobRecommendations = ({ userId }) => {
       <h2>Recommended Jobs</h2>
 
       {recommendedJobs.length === 0 ? (
-        <p>No job recommendations available.</p>
+        <p className="no-recommendations">No job recommendations available.</p>
       ) : (
-        <ul className="job-list">
+        <div className="job-cards">
           {recommendedJobs.map((job) => (
-            <li key={job.id} className="job-item">
-              <div className="job-title" onClick={() => handleViewJob(job)}>
-                {job.title} - <span className="company-name">{job.companyName}</span>
+            <div key={job.id} className="job-card">
+              <h3 className="job-title">{job.title}</h3>
+              <p>
+                <strong>Company:</strong> {job.companyName}
+              </p>
+              <p>
+                <strong>Location:</strong> {job.location}
+              </p>
+              <p>
+                <strong>Salary:</strong> ${job.salary || "Not Provided"}
+              </p>
+              <p>
+                <strong>Posted By:</strong> {job.postedBy}
+              </p>
+              <p>
+                <strong>Status:</strong> {job.jobStatus}
+              </p>
+              <p>
+                <strong>Description:</strong> {job.description}
+              </p>
+
+              {/* Apply Section */}
+              <div className="apply-section">
+                <label htmlFor={`resume-${job.id}`} className="custom-file-upload">
+                  Choose File
+                  <input type="file" id={`resume-${job.id}`} required />
+                </label>
+                <button className="apply-btn" onClick={() => handleApply(job.id)}>
+                  Apply
+                </button>
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
-      )}
-
-      {/* Modal for Job Details */}
-      {selectedJob && (
-        <Modal
-          isOpen={isModalOpen}
-          onRequestClose={closeModal}
-          className="modal-content"
-          overlayClassName="modal-overlay"
-        >
-          <h2>{selectedJob.title}</h2>
-          <p>
-            <strong>Company:</strong> {selectedJob.companyName}
-          </p>
-          <p>
-            <strong>Location:</strong> {selectedJob.location}
-          </p>
-          <p>
-            <strong>Salary:</strong> ${selectedJob.salary}
-          </p>
-          <p>
-            <strong>Posted By:</strong> {selectedJob.postedBy}
-          </p>
-          <p>
-            <strong>Status:</strong> {selectedJob.jobStatus}
-          </p>
-          <p>
-            <strong>Description:</strong> {selectedJob.description}
-          </p>
-
-          <button className="apply-btn">Apply</button>
-          <button className="close-btn" onClick={closeModal}>
-            Close
-          </button>
-        </Modal>
+        </div>
       )}
     </div>
   );

@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "../styles/form.css";
+import { useUserContext } from "../components/UserContext";
 
 const BASE_URL = "http://localhost:8080";
 
 const JobPostForm = () => {
+  const { user } = useUserContext(); // Use UserContext to fetch user details
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     location: "",
     salary: "",
     companyName: "",
-    postedBy: "",
+    postedBy: user?.name || "", // Default to logged-in user's name
     jobStatus: "active",
   });
 
@@ -24,7 +27,13 @@ const JobPostForm = () => {
   };
 
   const validateForm = () => {
-    if (!formData.title || !formData.description || !formData.location || !formData.companyName || !formData.postedBy) {
+    if (
+      !formData.title ||
+      !formData.description ||
+      !formData.location ||
+      !formData.companyName ||
+      !formData.postedBy
+    ) {
       return "All fields except salary are required.";
     }
     if (formData.salary && isNaN(formData.salary)) {
@@ -44,26 +53,36 @@ const JobPostForm = () => {
 
     setLoading(true);
     try {
+      // Post Job API
       await axios.post(`${BASE_URL}/api/jobs`, formData, {
         headers: { "Content-Type": "application/json" },
       });
+
+      // Send Notification API
+      await axios.post(`${BASE_URL}/api/notifications`, {
+        activityType: "JobPost",
+        jobDescription: `A new job "${formData.title}" was posted by ${formData.postedBy}.`,
+        userEmail: user?.email, // From UserContext
+        timestamp: new Date().toISOString(),
+      });
+
       alert("Job posted successfully!");
+
+      // Reset Form
       setFormData({
         title: "",
         description: "",
         location: "",
         salary: "",
         companyName: "",
-        postedBy: "",
+        postedBy: user?.name || "",
         jobStatus: "active",
       });
     } catch (error) {
       console.error("Error posting job:", error);
-      if (error.response?.data) {
-        setErrorMessage(error.response.data.error || "An unexpected error occurred.");
-      } else {
-        setErrorMessage("Failed to connect to the server. Please try again.");
-      }
+      setErrorMessage(
+        error.response?.data?.error || "Failed to connect to the server. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -149,11 +168,7 @@ const JobPostForm = () => {
           <option value="closed">Closed</option>
         </select>
 
-        <button
-          type="submit"
-          className="submit-btn"
-          disabled={loading}
-        >
+        <button type="submit" className="submit-btn" disabled={loading}>
           {loading ? "Posting..." : "Post Job"}
         </button>
       </form>

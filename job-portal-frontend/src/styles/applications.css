@@ -1,0 +1,81 @@
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
+}
+
+.applications-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.applications-heading {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  font-weight: bold;
+  margin: 1rem 0;
+}
+
+.no-applications-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #555;
+  font-style: italic;
+}
+
+.applications-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.application-item {
+  background: #f4f4f9;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.application-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.application-item div {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.application-item strong {
+  color: #007bff;
+  font-weight: bold;
+}
+
+@media screen and (max-width: 768px) {
+  .applications-container {
+    padding: 1rem;
+  }
+
+  .application-item {
+    padding: 1rem;
+  }
+}

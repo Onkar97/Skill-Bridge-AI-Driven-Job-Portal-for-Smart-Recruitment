@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../styles/list.css";
+import "../styles/list.css"; // Updated style import
 import { useUserContext } from "../components/UserContext";
 
 const BASE_URL = "http://localhost:8080/api";
@@ -39,9 +39,9 @@ const UserJobApplication = () => {
   // Apply for the selected job
   const handleApply = async (jobId) => {
     const formData = new FormData();
-
     const userId = user?.userId; // Fetch from UserContext
-    const resumeFile = document.getElementById(`resume-${jobId}`).files[0];
+    const resumeInput = document.getElementById(`resume-${jobId}`);
+    const resumeFile = resumeInput?.files[0];
 
     if (!userId || !resumeFile) {
       alert("User ID or resume file is missing!");
@@ -57,9 +57,14 @@ const UserJobApplication = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("Application submitted successfully!");
+
+      // Clear file input after successful application
+      resumeInput.value = "";
     } catch (error) {
       console.error("Error applying for job:", error);
-      alert(`Application failed: ${error.response?.data?.error || "Unknown error"}`);
+      alert(
+        `Application failed: ${error.response?.data?.error || "Unknown error"}`
+      );
     }
   };
 
@@ -82,15 +87,27 @@ const UserJobApplication = () => {
         {jobs.map((job) => (
           <li key={job.id} className="job-item">
             <h2>{job.title}</h2>
-            <p><strong>Company:</strong> {job.companyName}</p>
-            <p><strong>Location:</strong> {job.location}</p>
-            <p><strong>Salary:</strong> ${job.salary}</p>
-            <p><strong>Posted By:</strong> {job.postedBy}</p>
+            <p>
+              <strong>Company Name:</strong> {job.company.name || "N/A"}
+            </p>
+            <p>
+              <strong>Location:</strong> {job.location}
+            </p>
+            <p>
+              <strong>Salary:</strong> ${job.salary}
+            </p>
+            <p>
+              <strong>Posted By:</strong> {job.postedBy}
+            </p>
 
             <div className="apply-section">
-              <label htmlFor={`resume-${job.id}`}>Upload Resume:</label>
-              <input type="file" id={`resume-${job.id}`} required />
-              <button onClick={() => handleApply(job.id)}>Apply</button>
+              <label htmlFor={`resume-${job.id}`} className="custom-file-upload">
+                Choose Resume
+                <input type="file" id={`resume-${job.id}`} required />
+              </label>
+              <button className="apply-btn" onClick={() => handleApply(job.id)}>
+                Apply
+              </button>
             </div>
           </li>
         ))}

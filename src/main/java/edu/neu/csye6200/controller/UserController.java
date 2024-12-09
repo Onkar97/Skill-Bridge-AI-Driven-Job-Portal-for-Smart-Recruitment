@@ -45,6 +45,27 @@ public class UserController {
         }
     }
 
+    // Endpoint to fetch user details by email
+    @GetMapping("/find")
+    public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
+        log.info("Fetching user details for email: {}", email);
+
+        if (email == null || email.isEmpty()) {
+            log.warn("Email is missing in request");
+            return ResponseEntity.badRequest().body("Email is required.");
+        }
+
+        Optional<UserEntity> user = userService.getUserByEmail(email);
+
+        if (user.isPresent()) {
+            log.info("User found with email: {}", email);
+            return ResponseEntity.ok(user.get());
+        } else {
+            log.warn("No user found with email: {}", email);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+    }
+
     // Endpoint to register a new user
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody RegisterRequest registerRequest) {

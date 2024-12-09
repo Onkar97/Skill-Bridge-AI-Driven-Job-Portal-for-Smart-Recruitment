@@ -36,9 +36,9 @@ const Header = () => {
 
     const roleBasedLinks = {
       user: [
-        { text: 'Dashboard', icon: <DashboardIcon />, path: '/user-dashboard' },
         { text: 'Notifications', icon: <NotificationsIcon />, path: '/notifications' },
-        { text: 'Job Listings', icon: <WorkIcon />, path: '/JobList' }
+        { text: 'Job Listings', icon: <WorkIcon />, path: '/JobList' },
+        { text: 'Recommended jobs', icon: <WorkIcon />, path: '/JobRecommendations' }
       ],
       recruiter: [
         { text: 'Applications', icon: <WorkIcon />, path: '/JobApplicationsList' },
@@ -46,8 +46,8 @@ const Header = () => {
       ],
       hr: [
         { text: 'Create Job', icon: <CreateIcon />, path: '/JobPostForm' },
-        { text: 'Applications', icon: <WorkIcon />, path: '/JJobApplicationsList' },
-        { text: 'Create Notification', icon: <CreateIcon />, path: '/create' }
+        { text: 'Jobs Posted', icon: <WorkIcon />, path: '/JobApplicationsList' },
+        //{ text: 'Create Notification', icon: <CreateIcon />, path: '/create' }
       ]
     };
 

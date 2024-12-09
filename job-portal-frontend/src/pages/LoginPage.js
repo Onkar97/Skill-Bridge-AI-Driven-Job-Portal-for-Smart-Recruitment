@@ -10,6 +10,7 @@ import { styled } from '@mui/material/styles';
 import { Visibility, VisibilityOff, Email, Lock, Person, Business, SupervisorAccount } from '@mui/icons-material';
 import "../styles/login.css";
 import { useUserContext } from '../components/UserContext'; // Use the hook
+//import "../styles/login.css"
 
 const theme = createTheme({
   palette: {
@@ -105,7 +106,7 @@ const Login = () => {
 
         // Redirect based on role
         setTimeout(() => {
-          if (role === "user") navigate("/user-dashboard");
+          if (role === "user") navigate("/");
           else if (role === "recruiter") navigate("/recruiter-dashboard");
           else if (role === "hr") navigate("/JobPostForm");
         }, 1500);

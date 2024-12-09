@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class JobService {
@@ -63,6 +64,11 @@ public class JobService {
         return jobs.stream()
                 .map(JobResponse::new)
                 .toList();
+    }
+
+    // Service method to fetch job details by job ID
+    public Optional<Job> getJobById(Long jobId) {
+        return jobRepository.findByJobId(jobId);
     }
 }
 

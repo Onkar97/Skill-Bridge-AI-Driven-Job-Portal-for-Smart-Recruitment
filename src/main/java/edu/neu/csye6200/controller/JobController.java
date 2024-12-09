@@ -65,4 +65,19 @@ public class JobController {
         return ResponseEntity.ok(responses);
     }
 
+    // Endpoint to fetch job details by job ID
+    @GetMapping("/details")
+    public ResponseEntity<Object> getJobDetails(@RequestParam("jobId") Long jobId) {
+        if (jobId == null) {
+            return ResponseEntity.badRequest().body("Job ID is required.");
+        }
+
+        return jobService.getJobById(jobId)
+                .map(job -> {
+                    JobResponse jobResponse = new JobResponse(job);
+                    return ResponseEntity.ok((Object) jobResponse);  // Cast to Object to fix type mismatch
+                })
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Job not found."));
+    }
+
 }

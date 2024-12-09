@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface JobRepository extends JpaRepository<Job, Long> {
 
     @Query("SELECT j FROM Job j WHERE j.id = :jobId")
-    Optional<Job> findByJobId(@Param("jobId") Long userId);
+    Optional<Job> findByJobId(@Param("jobId") Long jobId);
 
     @Query("SELECT j FROM Job j WHERE " +
             "LOWER(j.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +

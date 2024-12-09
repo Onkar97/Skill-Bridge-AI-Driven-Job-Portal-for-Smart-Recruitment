@@ -60,9 +60,6 @@ const JobApplicationsList = () => {
               <div>
                 <strong>Job Status:</strong> {app.jobStatus || "N/A"}
               </div>
-              <div>
-                <strong>Job Posted File Name:</strong> {app.fileName || "No File"}
-              </div>
             </li>
           ))}
         </ul>
