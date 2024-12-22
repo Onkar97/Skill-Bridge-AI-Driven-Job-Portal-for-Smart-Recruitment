@@ -39,6 +39,10 @@ const NotificationList = () => {
     fetchNotifications(email);
   };
 
+  const sortedNotifications = [...notifications].sort(
+    (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+  );
+
   return (
     <Container>
       <Paper elevation={3} style={{ padding: "20px", marginTop: "20px" }}>
@@ -57,7 +61,7 @@ const NotificationList = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
+
               <TableCell>Activity Type</TableCell>
               <TableCell>Job Description</TableCell>
               <TableCell>User Email</TableCell>
@@ -65,9 +69,9 @@ const NotificationList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {notifications.map((notification) => (
+            {sortedNotifications.map((notification) => (
               <TableRow key={notification.notificationId}>
-                <TableCell>{notification.notificationId}</TableCell>
+
                 <TableCell>{notification.activityType}</TableCell>
                 <TableCell>{notification.jobDescription}</TableCell>
                 <TableCell>{notification.userEmail}</TableCell>
