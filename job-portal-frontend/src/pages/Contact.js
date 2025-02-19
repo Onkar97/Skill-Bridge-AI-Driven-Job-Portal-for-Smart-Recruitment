@@ -89,6 +89,7 @@ const Contact = () => {
                 fullWidth
                 label="Name"
                 name="name"
+                type="name"
                 value={formData.name}
                 onChange={handleChange}
                 required
