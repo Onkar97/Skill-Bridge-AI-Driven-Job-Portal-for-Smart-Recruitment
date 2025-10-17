@@ -1,6 +1,6 @@
-# SkillBridge – AI-Driven Job Portal for Smart Recruitment
+# Skill Bridge – Job Portal for Smart Recruitment
 
-SkillBridge is a full-stack recruitment platform that enables recruiters to post/manage jobs and candidates to search and apply. It includes automation to reduce manual recruiter effort and speed up hiring cycles.
+Skill Bridge is a full-stack recruitment platform that enables recruiters to post/manage jobs and candidates to search and apply. It includes automation to reduce manual recruiter effort and speed up hiring cycles.
 
 ## Features
 - **Job Management:** post, edit, and manage job listings; track applications
